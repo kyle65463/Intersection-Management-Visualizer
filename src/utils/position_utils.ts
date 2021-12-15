@@ -68,12 +68,64 @@ export function getZonePos(
 	return style;
 }
 
-export function getCarPos({ road, zone }: Car) {
+function getRelativeDir(
+	road?: Road,
+	zone?: ConflictZone,
+	lastRoad?: Road,
+	lastZone?: ConflictZone
+): Direction | undefined {
+	if (road && zone) return;
+	if (lastRoad && lastZone) return;
+	if (road) {
+		if (lastZone) {
+			const dir = getRelativeDir(lastRoad, lastZone, road, zone);
+			if (dir === "right") return "left";
+			if (dir === "left") return "right";
+			if (dir === "top") return "bot";
+			if (dir === "bot") return "top";
+		}
+	} else if (zone) {
+		if (lastZone) {
+			if (zone.col == lastZone.col + 1 && zone.row == lastZone.row) {
+				return "right";
+			} else if (zone.col == lastZone.col - 1 && zone.row == lastZone.row) {
+				return "left";
+			} else if (zone.col == lastZone.col && zone.row == lastZone.row - 1) {
+				return "top";
+			} else if (zone.col == lastZone.col && zone.row == lastZone.row + 1) {
+				return "bot";
+			}
+		} else if (lastRoad) {
+			if (lastRoad.dir === "left" || lastRoad.dir === "right") {
+				const startIndex = ~~((ConflictZone.numRows - lastRoad.numRoads) / 2);
+				if (startIndex + lastRoad.id === zone.row) {
+					if (lastRoad.dir === "left" && zone.col == 0) {
+						return "right";
+					} else if (lastRoad.dir === "right" && zone.col == ConflictZone.numCols - 1) {
+						return "left";
+					}
+				}
+			} else {
+				const startIndex = ~~((ConflictZone.numCols - lastRoad.numRoads) / 2);
+				if (startIndex + lastRoad.id === zone.col) {
+					if (lastRoad.dir === "top" && zone.row == 0) {
+						return "bot";
+					} else if (lastRoad.dir === "bot" && zone.row == ConflictZone.numRows - 1) {
+						return "top";
+					}
+				}
+			}
+		}
+	}
+}
+
+export function getCarPos({ road, zone, rotation }: Car) {
 	let style = {};
 	if (road) {
 		const numRoads = road?.numRoads;
 		if (road.dir === "left") {
 			const startIndex = ~~((ConflictZone.numRows - numRoads) / 2);
+			style = { ...style, transform: `rotate(${rotation}deg)` };
 			style = {
 				...style,
 				top: getZonePos(0, road.id + startIndex, { top: `${(roadWidth - carWidth) / 2}px` }).top,
@@ -84,7 +136,7 @@ export function getCarPos({ road, zone }: Car) {
 			};
 		} else if (road.dir === "right") {
 			const startIndex = ~~((ConflictZone.numRows - numRoads) / 2);
-			style = { ...style, transform: "rotate(180deg)" };
+			style = { ...style, transform: `rotate(${rotation}deg)` };
 			style = {
 				...style,
 				top: getZonePos(0, road.id + startIndex, {
@@ -104,7 +156,7 @@ export function getCarPos({ road, zone }: Car) {
 			style = { ...style, width: `${vertRoadLength}px` };
 
 			if (road.dir === "bot") {
-				style = { ...style, transform: "rotate(90deg)", transformOrigin: "left top" };
+				style = { ...style, transform: `rotate(${rotation}deg)`, transformOrigin: "left top" };
 				style = {
 					...style,
 					top: `${
@@ -120,7 +172,7 @@ export function getCarPos({ road, zone }: Car) {
 					}).left,
 				};
 			} else {
-				style = { ...style, transform: "rotate(-90deg)", transformOrigin: "left top" };
+				style = { ...style, transform: `rotate(${rotation}deg)`, transformOrigin: "left top" };
 				style = {
 					...style,
 					top: `${getZonePos(road.id, 0).top}`,
@@ -134,6 +186,12 @@ export function getCarPos({ road, zone }: Car) {
 			}
 		}
 	} else if (zone) {
+		style = { ...style, transform: `rotate(${rotation}deg)` };
+		style = {
+			...style,
+			top: getZonePos(zone.col, zone.row).top,
+			left: getZonePos(zone.col, zone.row).left,
+		};
 	}
 	return style;
 }

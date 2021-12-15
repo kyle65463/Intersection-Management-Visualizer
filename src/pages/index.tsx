@@ -5,7 +5,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import CarView from "../components/CarView";
 import ConflictZoneView from "../components/ConflictZoneView";
 import RoadsView from "../components/RoadsView";
-import { Car } from "../models/car";
+import { Car, goLeft, goRight, goStraight } from "../models/car";
 import { ConflictZone, useConflictZones } from "../models/confict_zone";
 import { Road, Direction } from "../models/road";
 
@@ -37,7 +37,6 @@ function Home() {
 		});
 		setSize({ col, row });
 	}, [roadCollections]);
-
 	return (
 		<DndProvider backend={HTML5Backend}>
 			<Head>
@@ -52,7 +51,10 @@ function Home() {
 						{...roads}
 						addRoad={addRoad}
 						moveCar={(carId: number, road: Road) => {
-							setCar({ ...car, road });
+							if (!car.started) {
+								car.setInitialRoad(road);
+								setCar({ ...car });
+							}
 						}}
 					/>
 				))}
@@ -60,6 +62,38 @@ function Home() {
 					<ConflictZoneView key={i} zone={zone} />
 				))}
 			</main>
+
+			<div className='flex flex-col justify-end'>
+				<button
+					className='btn'
+					onClick={() => {
+						goLeft(car);
+						setCar({ ...car });
+					}}
+				>
+					left
+				</button>
+				<button
+					className='btn'
+					onClick={() => {
+						goRight(car);
+						setCar({ ...car });
+					}}
+				>
+					right
+				</button>
+				<button
+					className='btn'
+					onClick={() => {
+						goStraight(car);
+						if (car.zone) console.log(car.zone);
+						if (car.road) console.log(car.road);
+						setCar({ ...car });
+					}}
+				>
+					foward
+				</button>
+			</div>
 		</DndProvider>
 	);
 }
