@@ -20,3 +20,12 @@ export function getRoadPos(dir: RoadDirection, numRoads: number, roadId: number)
 	}
 	return style;
 }
+
+export function getZonePos(col: number, row: number, totalCol: number, totalRow: number) {
+	const width = roadWidth - roadBorderWidth;
+	let style = {};
+	style = { ...style, width: `${roadWidth}px`, height: `${roadWidth}px` };
+	style = { ...style, right: `calc(50% - ${(totalCol / 2) * width}px + ${col * width}px)` };
+	style = { ...style, top: `calc(50% - ${(totalRow / 2) * width}px + ${row * width}px)` };
+	return style;
+}
