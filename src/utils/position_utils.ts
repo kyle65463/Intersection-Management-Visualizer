@@ -1,11 +1,12 @@
+import { Car } from "../models/car";
 import { ConflictZone } from "../models/confict_zone";
 import { Direction, Road } from "../models/road";
 import { carLength, carWidth, horizRoadLength, roadBorderWidth, roadWidth, vertRoadLength } from "./constants";
 
-export function getRoadPos(dir: Direction, totalRoads: number, roadId: number) {
+export function getRoadPos({ dir, numRoads, id: roadId }: Road) {
 	let style = {};
 	if (dir === "top" || dir === "bot") {
-		const startIndex = ~~((ConflictZone.numCols - totalRoads) / 2);
+		const startIndex = ~~((ConflictZone.numCols - numRoads) / 2);
 		style = { ...style, transform: "rotate(90deg)", transformOrigin: "left top" };
 		style = { ...style, width: `${vertRoadLength}px` };
 		style = {
@@ -30,7 +31,7 @@ export function getRoadPos(dir: Direction, totalRoads: number, roadId: number) {
 			};
 		}
 	} else {
-		const startIndex = ~~((ConflictZone.numRows - totalRoads) / 2);
+		const startIndex = ~~((ConflictZone.numRows - numRoads) / 2);
 		style = { ...style, width: `${horizRoadLength}px` };
 		style = { ...style, top: getZonePos(0, roadId + startIndex).top };
 		if (dir === "right") {
@@ -67,11 +68,12 @@ export function getZonePos(
 	return style;
 }
 
-export function getCarPos({ road, zone, totalRoads }: { road?: Road; zone?: ConflictZone; totalRoads: number }) {
+export function getCarPos({ road, zone }: Car) {
 	let style = {};
 	if (road) {
+		const numRoads = road?.numRoads;
 		if (road.dir === "left") {
-			const startIndex = ~~((ConflictZone.numRows - totalRoads) / 2);
+			const startIndex = ~~((ConflictZone.numRows - numRoads) / 2);
 			style = {
 				...style,
 				top: getZonePos(0, road.id + startIndex, { top: `${(roadWidth - carWidth) / 2}px` }).top,
@@ -81,7 +83,7 @@ export function getCarPos({ road, zone, totalRoads }: { road?: Road; zone?: Conf
 				left: `${getZonePos(0, road.id, { left: `-${carLength}px` }).left}`,
 			};
 		} else if (road.dir === "right") {
-			const startIndex = ~~((ConflictZone.numRows - totalRoads) / 2);
+			const startIndex = ~~((ConflictZone.numRows - numRoads) / 2);
 			style = { ...style, transform: "rotate(180deg)" };
 			style = {
 				...style,
@@ -98,7 +100,7 @@ export function getCarPos({ road, zone, totalRoads }: { road?: Road; zone?: Conf
 				}`,
 			};
 		} else {
-			const startIndex = ~~((ConflictZone.numCols - totalRoads) / 2);
+			const startIndex = ~~((ConflictZone.numCols - numRoads) / 2);
 			style = { ...style, width: `${vertRoadLength}px` };
 
 			if (road.dir === "bot") {

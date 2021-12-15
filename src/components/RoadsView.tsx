@@ -17,7 +17,6 @@ function RoadsView({ dir, roads, addRoad, moveCar }: RoadsViewProps) {
 				<RoadView
 					key={road.id}
 					road={road}
-					totalRoads={roads.length}
 					moveCar={(carId: number) => moveCar(carId, road)}
 				/>
 			))}

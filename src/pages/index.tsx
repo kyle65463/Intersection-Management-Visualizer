@@ -15,22 +15,11 @@ function Home() {
 	const { zones, setSize } = useConflictZones();
 	const [car, setCar] = useState(new Car(0));
 
-	const getTotalRoads = (road?: Road) => {
-		let res = 0;
-		if (road) {
-			roadCollections.forEach((collection) => {
-				if (collection.dir === road.dir) {
-					res = collection.roads.length;
-				}
-			});
-		}
-		return res;
-	};
-
 	const addRoad = useCallback(
 		(road: Road) => {
 			const roadsId = roadCollections.findIndex((roads) => roads.dir === road.dir);
 			roadCollections[roadsId].roads.push(road);
+			Road.numAllRoads[road.dir] = roadCollections[roadsId].roads.length;
 			setRoads([...roadCollections]);
 		},
 		[roadCollections]
@@ -56,7 +45,7 @@ function Home() {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main className='container mx-auto py-5 relative min-h-screen'>
-				<CarView car={car} totalRoads={getTotalRoads(car.road)} />
+				<CarView car={car} />
 				{roadCollections.map((roads, i) => (
 					<RoadsView
 						key={i}

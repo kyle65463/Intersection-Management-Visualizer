@@ -6,10 +6,9 @@ import { getCarPos } from "../utils/position_utils";
 
 interface CarViewProps {
 	car: Car;
-	totalRoads: number;
 }
 
-function CarView({ car, totalRoads }: CarViewProps) {
+function CarView({ car }: CarViewProps) {
 	const [{ opacity }, dragRef] = useDrag(
 		() => ({
 			type: ItemTypes.CAR,
@@ -24,7 +23,7 @@ function CarView({ car, totalRoads }: CarViewProps) {
 	return (
 		<div
 			style={{
-				...getCarPos({ road: car.road, zone: car.zone, totalRoads }),
+				...getCarPos(car),
 				width: `${carLength}px`,
 				height: `${carWidth}px`,
 			}}
