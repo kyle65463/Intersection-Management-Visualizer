@@ -1,15 +1,17 @@
 import React from "react";
 import { useDrop } from "react-dnd";
-import { ItemTypes, roadHeight } from "../utils/constants";
+import { Road } from "../models/road";
+import { ItemTypes, roadWidth } from "../utils/constants";
 import { getRoadPos } from "../utils/position_utils";
 
 interface RoadViewProps {
-	id: number;
+	road: Road;
 	numRoads: number;
 	moveCar: (carId: number) => void;
 }
 
-function RoadView({ id, numRoads, moveCar }: RoadViewProps) {
+function RoadView({ road, numRoads, moveCar }: RoadViewProps) {
+	const { id, dir } = road;
 	const [, drop] = useDrop(() => ({
 		accept: ItemTypes.CAR,
 		drop: (item: { id: number }) => {
@@ -19,8 +21,8 @@ function RoadView({ id, numRoads, moveCar }: RoadViewProps) {
 	}));
 	return (
 		<div
-			style={{ ...getRoadPos(numRoads, id), height: `${roadHeight}px` }}
-			className='bg-gray-300 border-y-2 border-gray-500 absolute w-96'
+			style={{ ...getRoadPos(dir, numRoads, id), height: `${roadWidth}px` }}
+			className='bg-gray-300 border-y-2 border-gray-500 absolute'
 			ref={drop}
 		>
 			road {id}

@@ -15,7 +15,7 @@ function RoadsView({ dir, roads, addRoad }: RoadsViewProps) {
 			{roads.map((road) => (
 				<RoadView
 					key={road.id}
-					id={road.id}
+					road={road}
 					numRoads={roads.length}
 					moveCar={(carId: number) => {
 						// setRoadId(road.id);
