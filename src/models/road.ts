@@ -1,11 +1,11 @@
-export type RoadDirection = "left" | "right" | "top" | "bot";
+export type Direction = "left" | "right" | "top" | "bot";
 
 export class Road {
-	constructor(id: number, dir: RoadDirection) {
+	constructor(id: number, dir: Direction) {
 		this.id = id;
         this.dir = dir;
 	}
 
 	public id: number;
-	public dir: RoadDirection;
+	public dir: Direction;
 }

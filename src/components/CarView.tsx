@@ -1,17 +1,21 @@
 import React from "react";
 import { useDrag } from "react-dnd";
-import { ItemTypes } from "../utils/constants";
+import { Car } from "../models/car";
+import { carLength, carWidth, ItemTypes } from "../utils/constants";
+import { getCarPos } from "../utils/position_utils";
 
 interface CarViewProps {
-	id: number;
-	roadId: number;
+	car: Car;
+	totalRoads: number;
+	totalCol: number;
+	totalRow: number;
 }
 
-function CarView({ id, roadId }: CarViewProps) {
+function CarView({ car, totalRoads, totalCol, totalRow }: CarViewProps) {
 	const [{ opacity }, dragRef] = useDrag(
 		() => ({
 			type: ItemTypes.CAR,
-			item: { id },
+			item: { id: car.id },
 			collect: (monitor) => ({
 				opacity: monitor.isDragging() ? 0.5 : 1,
 			}),
@@ -21,11 +25,15 @@ function CarView({ id, roadId }: CarViewProps) {
 
 	return (
 		<div
-			style={{ top: `${roadId * 60}px` }}
+			style={{
+				...getCarPos({ road: car.road, zone: car.zone, totalCol, totalRow, totalRoads }),
+				width: `${carLength}px`,
+				height: `${carWidth}px`,
+			}}
 			ref={dragRef}
-			className='border-4 w-12 z-10 bg-red-500 absolute duration-1000'
+			className='z-10 bg-blue-400 absolute duration-1000 text-xs'
 		>
-			car {id}
+			car {car.id}
 		</div>
 	);
 }

@@ -1,16 +1,17 @@
 import React from "react";
-import { Road, RoadDirection } from "../models/road";
+import { Road, Direction } from "../models/road";
 import RoadView from "./RoadView";
 
 interface RoadsViewProps {
-	dir: RoadDirection;
+	dir: Direction;
 	roads: Road[];
 	totalCol: number;
 	totalRow: number;
 	addRoad: (road: Road) => void;
+	moveCar: (carId: number, road: Road) => void;
 }
 
-function RoadsView({ dir, roads, addRoad, totalCol, totalRow }: RoadsViewProps) {
+function RoadsView({ dir, roads, addRoad, totalCol, totalRow, moveCar }: RoadsViewProps) {
 	return (
 		<>
 			<h1>{dir}</h1>
@@ -21,9 +22,7 @@ function RoadsView({ dir, roads, addRoad, totalCol, totalRow }: RoadsViewProps) 
 					totalRoads={roads.length}
 					totalCol={totalCol}
 					totalRow={totalRow}
-					moveCar={(carId: number) => {
-						// setRoadId(road.id);
-					}}
+					moveCar={(carId: number) => moveCar(carId, road)}
 				/>
 			))}
 			<button

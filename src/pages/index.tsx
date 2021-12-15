@@ -5,14 +5,27 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import CarView from "../components/CarView";
 import ConflictZoneView from "../components/ConflictZoneView";
 import RoadsView from "../components/RoadsView";
-import { ConflictZone, useConflictZones } from "../models/confict_zone";
-import { Road, RoadDirection } from "../models/road";
+import { Car } from "../models/car";
+import { useConflictZones } from "../models/confict_zone";
+import { Road, Direction } from "../models/road";
 
 function Home() {
-	const dirs: RoadDirection[] = ["left", "right", "top", "bot"];
+	const dirs: Direction[] = ["left", "right", "top", "bot"];
 	const [roadCollections, setRoads] = useState(dirs.map((dir) => ({ dir, roads: [new Road(0, dir)] })));
 	const { zones, col, row, setCol, setRow } = useConflictZones();
-	const [roadId, setRoadId] = useState(0);
+	const [car, setCar] = useState(new Car(0));
+
+	const getTotalRoads = (road?: Road) => {
+		let res = 0;
+		if (road) {
+			roadCollections.forEach((collection) => {
+				if (collection.dir === road.dir) {
+					res = collection.roads.length;
+				}
+			});
+		}
+		return res;
+	};
 
 	const addRoad = useCallback(
 		(road: Road) => {
@@ -44,9 +57,18 @@ function Home() {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main className='container mx-auto py-5 relative min-h-screen'>
-				<CarView id={0} roadId={roadId} />
+				<CarView car={car} totalRoads={getTotalRoads(car.road)} totalCol={col} totalRow={row} />
 				{roadCollections.map((roads, i) => (
-					<RoadsView key={i} {...roads} addRoad={addRoad} totalCol={col} totalRow={row} />
+					<RoadsView
+						key={i}
+						{...roads}
+						addRoad={addRoad}
+						totalCol={col}
+						totalRow={row}
+						moveCar={(carId: number, road: Road) => {
+							setCar({ ...car, road });
+						}}
+					/>
 				))}
 				{zones.map((zone, i) => (
 					<ConflictZoneView key={i} zone={zone} totalCol={col} totalRow={row} />
