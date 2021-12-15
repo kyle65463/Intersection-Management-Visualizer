@@ -2,8 +2,8 @@ import Head from "next/head";
 import { useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import CarView from "../components/DraggableCar";
-import RoadView from "../components/DroppableRoad";
+import CarView from "../components/CarView";
+import RoadView from "../components/RoadView";
 import { Road } from "../models/road";
 
 function Home() {

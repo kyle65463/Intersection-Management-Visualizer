@@ -20,8 +20,12 @@ function CarView({ id, roadId }: CarViewProps) {
 	);
 
 	return (
-		<div style={{ top: `${roadId * 60}px` }} ref={dragRef} className='border-4 w-12 z-10 bg-red-500 absolute'>
-			 car {id} 
+		<div
+			style={{ top: `${roadId * 60}px` }}
+			ref={dragRef}
+			className='border-4 w-12 z-10 bg-red-500 absolute duration-1000'
+		>
+			car {id}
 		</div>
 	);
 }
