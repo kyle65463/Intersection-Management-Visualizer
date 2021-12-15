@@ -1,22 +1,28 @@
 import React from "react";
 import { useDrop } from "react-dnd";
-import { ItemTypes } from "../utils/constants";
+import { ItemTypes, roadHeight } from "../utils/constants";
+import { getRoadPos } from "../utils/position_utils";
 
 interface RoadViewProps {
 	id: number;
+	numRoads: number;
 	moveCar: (carId: number) => void;
 }
 
-function RoadView({ id, moveCar }: RoadViewProps) {
+function RoadView({ id, numRoads, moveCar }: RoadViewProps) {
 	const [, drop] = useDrop(() => ({
 		accept: ItemTypes.CAR,
 		drop: (item: { id: number }) => {
-            console.log(item)
+			console.log(item);
 			moveCar(item.id);
 		},
 	}));
 	return (
-		<div style={{ top: `${id * 60}px` }} className='bg-gray-400 h-10 absolute w-96' ref={drop}>
+		<div
+			style={getRoadPos(numRoads, id)}
+			className='bg-gray-300 h-10 border-y-2 border-gray-500 absolute w-96'
+			ref={drop}
+		>
 			road {id}
 		</div>
 	);

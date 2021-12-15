@@ -5,9 +5,10 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import CarView from "../components/CarView";
 import RoadView from "../components/RoadView";
 import { Road } from "../models/road";
+import { roadHeight } from "../utils/constants";
 
 function Home() {
-	const roads = [new Road(0), new Road(1), new Road(2)];
+	const [roads, setRoads] = useState([new Road(0)]);
 	const [roadId, setRoadId] = useState(0);
 	return (
 		<DndProvider backend={HTML5Backend}>
@@ -15,17 +16,26 @@ function Home() {
 				<title>Title</title>
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
-			<main className='container mx-auto my-5 relative'>
+			<main className='container mx-auto py-5 relative min-h-screen'>
 				<CarView id={0} roadId={roadId} />
 				{roads.map((road) => (
 					<RoadView
-						id={road.id}
 						key={road.id}
+						id={road.id}
+						numRoads={roads.length}
 						moveCar={(carId: number) => {
 							setRoadId(road.id);
 						}}
 					></RoadView>
 				))}
+				<button
+					className='btn'
+					onClick={() => {
+						setRoads([...roads, new Road(roads.length)]);
+					}}
+				>
+					add
+				</button>
 			</main>
 		</DndProvider>
 	);
