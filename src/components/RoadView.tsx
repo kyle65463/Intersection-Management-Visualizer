@@ -6,11 +6,13 @@ import { getRoadPos } from "../utils/position_utils";
 
 interface RoadViewProps {
 	road: Road;
-	numRoads: number;
+	totalRoads: number;
+	totalCol: number;
+	totalRow: number;
 	moveCar: (carId: number) => void;
 }
 
-function RoadView({ road, numRoads, moveCar }: RoadViewProps) {
+function RoadView({ road, totalRoads, totalCol, totalRow, moveCar }: RoadViewProps) {
 	const { id, dir } = road;
 	const [, drop] = useDrop(() => ({
 		accept: ItemTypes.CAR,
@@ -21,7 +23,7 @@ function RoadView({ road, numRoads, moveCar }: RoadViewProps) {
 	}));
 	return (
 		<div
-			style={{ ...getRoadPos(dir, numRoads, id), height: `${roadWidth}px` }}
+			style={{ ...getRoadPos(dir, totalRoads, totalCol, totalRow, id), height: `${roadWidth}px` }}
 			className='bg-gray-300 border-y-2 border-gray-500 absolute'
 			ref={drop}
 		>

@@ -5,18 +5,22 @@ import RoadView from "./RoadView";
 interface RoadsViewProps {
 	dir: RoadDirection;
 	roads: Road[];
+	totalCol: number;
+	totalRow: number;
 	addRoad: (road: Road) => void;
 }
 
-function RoadsView({ dir, roads, addRoad }: RoadsViewProps) {
+function RoadsView({ dir, roads, addRoad, totalCol, totalRow }: RoadsViewProps) {
 	return (
 		<>
-		<h1>{dir}</h1>
+			<h1>{dir}</h1>
 			{roads.map((road) => (
 				<RoadView
 					key={road.id}
 					road={road}
-					numRoads={roads.length}
+					totalRoads={roads.length}
+					totalCol={totalCol}
+					totalRow={totalRow}
 					moveCar={(carId: number) => {
 						// setRoadId(road.id);
 					}}

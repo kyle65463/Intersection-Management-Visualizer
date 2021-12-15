@@ -46,10 +46,10 @@ function Home() {
 			<main className='container mx-auto py-5 relative min-h-screen'>
 				<CarView id={0} roadId={roadId} />
 				{roadCollections.map((roads, i) => (
-					<RoadsView key={i} {...roads} addRoad={addRoad} />
+					<RoadsView key={i} {...roads} addRoad={addRoad} totalCol={col} totalRow={row} />
 				))}
-				{zones.map((zone) => (
-					<ConflictZoneView zone={zone} totalCol={col} totalRow={row} />
+				{zones.map((zone, i) => (
+					<ConflictZoneView key={i} zone={zone} totalCol={col} totalRow={row} />
 				))}
 			</main>
 		</DndProvider>
