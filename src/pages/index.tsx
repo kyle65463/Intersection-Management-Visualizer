@@ -6,13 +6,13 @@ import CarView from "../components/CarView";
 import ConflictZoneView from "../components/ConflictZoneView";
 import RoadsView from "../components/RoadsView";
 import { Car } from "../models/car";
-import { useConflictZones } from "../models/confict_zone";
+import { ConflictZone, useConflictZones } from "../models/confict_zone";
 import { Road, Direction } from "../models/road";
 
 function Home() {
 	const dirs: Direction[] = ["left", "right", "top", "bot"];
 	const [roadCollections, setRoads] = useState(dirs.map((dir) => ({ dir, roads: [new Road(0, dir)] })));
-	const { zones, col, row, setCol, setRow } = useConflictZones();
+	const { zones, setSize } = useConflictZones();
 	const [car, setCar] = useState(new Car(0));
 
 	const getTotalRoads = (road?: Road) => {
@@ -46,8 +46,7 @@ function Home() {
 				col = Math.max(col, collection.roads.length);
 			}
 		});
-		setCol(col);
-		setRow(row);
+		setSize({ col, row });
 	}, [roadCollections]);
 
 	return (
@@ -57,21 +56,19 @@ function Home() {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main className='container mx-auto py-5 relative min-h-screen'>
-				<CarView car={car} totalRoads={getTotalRoads(car.road)} totalCol={col} totalRow={row} />
+				<CarView car={car} totalRoads={getTotalRoads(car.road)} />
 				{roadCollections.map((roads, i) => (
 					<RoadsView
 						key={i}
 						{...roads}
 						addRoad={addRoad}
-						totalCol={col}
-						totalRow={row}
 						moveCar={(carId: number, road: Road) => {
 							setCar({ ...car, road });
 						}}
 					/>
 				))}
 				{zones.map((zone, i) => (
-					<ConflictZoneView key={i} zone={zone} totalCol={col} totalRow={row} />
+					<ConflictZoneView key={i} zone={zone} />
 				))}
 			</main>
 		</DndProvider>

@@ -1,5 +1,5 @@
 import { ConflictZone } from "./confict_zone";
-import { Road } from "./road";
+import { Direction, Road } from "./road";
 
 export class Car {
 	constructor(id: number) {

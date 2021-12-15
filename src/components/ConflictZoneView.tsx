@@ -4,18 +4,11 @@ import { getZonePos } from "../utils/position_utils";
 
 interface ConflictZoneViewProps {
 	zone: ConflictZone;
-	totalCol: number;
-	totalRow: number;
 }
 
-function ConflictZoneView({ zone, totalCol, totalRow }: ConflictZoneViewProps) {
+function ConflictZoneView({ zone }: ConflictZoneViewProps) {
 	const { col, row } = zone;
-	return (
-		<div
-			style={getZonePos(col, row, totalCol, totalRow)}
-			className='absolute bg-gray-300 border-2 border-gray-500'
-		/>
-	);
+	return <div style={getZonePos(col, row)} className='absolute bg-gray-300 border-2 border-gray-500' />;
 }
 
 export default ConflictZoneView;

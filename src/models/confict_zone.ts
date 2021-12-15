@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export class ConflictZone {
 	constructor(x: number, y: number) {
@@ -8,16 +8,22 @@ export class ConflictZone {
 
 	public col: number;
 	public row: number;
+	static numCols: number = 1;
+	static numRows: number = 1;
 }
 
 export function useConflictZones() {
-	const [col, setCol] = useState(1);
-	const [row, setRow] = useState(1);
-	const zones: ConflictZone[] = [];
-	for (let i = 0; i < col; i++) {
-		for (let j = 0; j < row; j++) {
-			zones.push(new ConflictZone(i, j));
+	const [size, setSize] = useState({ col: 1, row: 1 });
+	const [zones, setZones] = useState<ConflictZone[]>([]);
+	useEffect(() => {
+		ConflictZone.numCols = size.col;
+		ConflictZone.numRows = size.row;
+		for (let i = 0; i < size.col; i++) {
+			for (let j = 0; j < size.row; j++) {
+				zones.push(new ConflictZone(i, j));
+			}
 		}
-	}
-	return { zones, col, row, setRow, setCol };
+		setZones([...zones]);
+	}, [size.col, size.row]);
+	return { zones, setSize };
 }
