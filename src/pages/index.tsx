@@ -86,8 +86,6 @@ function Home() {
 					className='btn'
 					onClick={() => {
 						goStraight(car);
-						if (car.zone) console.log(car.zone);
-						if (car.road) console.log(car.road);
 						setCar({ ...car });
 					}}
 				>

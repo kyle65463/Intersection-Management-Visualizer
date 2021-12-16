@@ -8,5 +8,5 @@ export const roadWidth = 45;
 export const roadBorderWidth = 2;
 
 
-export const carLength = 35;
-export const carWidth = 22;
+export const carLength = 30;
+export const carWidth = 18;

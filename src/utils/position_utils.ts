@@ -186,11 +186,34 @@ export function getCarPos({ road, zone, rotation }: Car) {
 			}
 		}
 	} else if (zone) {
+		let topOffset = "0px";
+		let leftOffset = "0px";
+		console.log(rotation);
+		console.log(rotation % 180);
+		if (rotation % 180 === 0) {
+			topOffset = `calc(${(roadWidth - carWidth) / 2}px)`;
+			leftOffset = `calc(${(roadWidth - carLength) / 2}px)`;
+		}
+		if (rotation % 180 === 45 || rotation % 180 === -135) {
+			style = { ...style, transform: `rotate(${rotation}deg)` };
+			topOffset = `calc(${(roadWidth - carLength) / 2 + 8}px)`;
+			leftOffset = `calc(${8}px)`;
+		}
+		if (rotation % 180 === 90 || rotation % 180 === -90) {
+			style = { ...style, transform: `rotate(${rotation}deg)` };
+			topOffset = `calc(${(roadWidth - carWidth) / 2}px)`;
+			leftOffset = `calc(${(roadWidth - carLength) / 2}px)`;
+		}
+		if (rotation % 180 === 135 || rotation % 180 === -45) {
+			style = { ...style, transform: `rotate(${rotation}deg)`};
+			topOffset = `calc(${(roadWidth - carLength) / 2 + 8}px)`;
+			leftOffset = `calc(${8}px)`;
+		}
 		style = { ...style, transform: `rotate(${rotation}deg)` };
 		style = {
 			...style,
-			top: getZonePos(zone.col, zone.row).top,
-			left: getZonePos(zone.col, zone.row).left,
+			top: getZonePos(zone.col, zone.row, { top: topOffset }).top,
+			left: getZonePos(zone.col, zone.row, { left: leftOffset }).left,
 		};
 	}
 	return style;
