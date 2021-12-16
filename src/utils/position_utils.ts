@@ -68,58 +68,7 @@ export function getZonePos(
 	return style;
 }
 
-function getRelativeDir(
-	road?: Road,
-	zone?: ConflictZone,
-	lastRoad?: Road,
-	lastZone?: ConflictZone
-): Direction | undefined {
-	if (road && zone) return;
-	if (lastRoad && lastZone) return;
-	if (road) {
-		if (lastZone) {
-			const dir = getRelativeDir(lastRoad, lastZone, road, zone);
-			if (dir === "right") return "left";
-			if (dir === "left") return "right";
-			if (dir === "top") return "bot";
-			if (dir === "bot") return "top";
-		}
-	} else if (zone) {
-		if (lastZone) {
-			if (zone.col == lastZone.col + 1 && zone.row == lastZone.row) {
-				return "right";
-			} else if (zone.col == lastZone.col - 1 && zone.row == lastZone.row) {
-				return "left";
-			} else if (zone.col == lastZone.col && zone.row == lastZone.row - 1) {
-				return "top";
-			} else if (zone.col == lastZone.col && zone.row == lastZone.row + 1) {
-				return "bot";
-			}
-		} else if (lastRoad) {
-			if (lastRoad.dir === "left" || lastRoad.dir === "right") {
-				const startIndex = ~~((ConflictZone.numRows - lastRoad.numRoads) / 2);
-				if (startIndex + lastRoad.id === zone.row) {
-					if (lastRoad.dir === "left" && zone.col == 0) {
-						return "right";
-					} else if (lastRoad.dir === "right" && zone.col == ConflictZone.numCols - 1) {
-						return "left";
-					}
-				}
-			} else {
-				const startIndex = ~~((ConflictZone.numCols - lastRoad.numRoads) / 2);
-				if (startIndex + lastRoad.id === zone.col) {
-					if (lastRoad.dir === "top" && zone.row == 0) {
-						return "bot";
-					} else if (lastRoad.dir === "bot" && zone.row == ConflictZone.numRows - 1) {
-						return "top";
-					}
-				}
-			}
-		}
-	}
-}
-
-export function getCarPos({ road, zone, rotation }: Car) {
+export function getCarPos({ road, zone, rotation, turning, dir }: Car) {
 	let style = {};
 	if (road) {
 		const numRoads = road?.numRoads;
@@ -188,16 +137,34 @@ export function getCarPos({ road, zone, rotation }: Car) {
 	} else if (zone) {
 		let topOffset = "0px";
 		let leftOffset = "0px";
-		console.log(rotation);
-		console.log(rotation % 180);
 		if (rotation % 180 === 0) {
 			topOffset = `calc(${(roadWidth - carWidth) / 2}px)`;
 			leftOffset = `calc(${(roadWidth - carLength) / 2}px)`;
 		}
 		if (rotation % 180 === 45 || rotation % 180 === -135) {
+			let ot = 8;
+			let ol = 8;
+			let o2 = 4;
+			if (turning === "clockwise") {
+				if (dir === "bot" || dir === "right") {
+					ot += o2;
+					ol -= o2;
+				} else {
+					ot -= o2;
+					ol += o2;
+				}
+			} else if (turning === "anti-clockwise") {
+				if (dir === "top" || dir === "left") {
+					ot += o2;
+					ol -= o2;
+				} else {
+					ot -= o2;
+					ol += o2;
+				}
+			}
 			style = { ...style, transform: `rotate(${rotation}deg)` };
-			topOffset = `calc(${(roadWidth - carLength) / 2 + 8}px)`;
-			leftOffset = `calc(${8}px)`;
+			topOffset = `calc(${(roadWidth - carLength) / 2 + ot}px)`;
+			leftOffset = `calc(${ol}px)`;
 		}
 		if (rotation % 180 === 90 || rotation % 180 === -90) {
 			style = { ...style, transform: `rotate(${rotation}deg)` };
@@ -205,9 +172,29 @@ export function getCarPos({ road, zone, rotation }: Car) {
 			leftOffset = `calc(${(roadWidth - carLength) / 2}px)`;
 		}
 		if (rotation % 180 === 135 || rotation % 180 === -45) {
-			style = { ...style, transform: `rotate(${rotation}deg)`};
-			topOffset = `calc(${(roadWidth - carLength) / 2 + 8}px)`;
-			leftOffset = `calc(${8}px)`;
+			let ot = 8;
+			let ol = 8;
+			let o2 = 4;
+			if (turning === "clockwise") {
+				if (dir === "right" || dir === "top") {
+					ot += o2;
+					ol += o2;
+				} else {
+					ot -= o2;
+					ol -= o2;
+				}
+			} else if (turning === "anti-clockwise") {
+				if (dir === "left" || dir === "bot") {
+					ot += o2;
+					ol += o2;
+				} else {
+					ot -= o2;
+					ol -= o2;
+				}
+			}
+			style = { ...style, transform: `rotate(${rotation}deg)` };
+			topOffset = `calc(${(roadWidth - carLength) / 2 + ot}px)`;
+			leftOffset = `calc(${ol}px)`;
 		}
 		style = { ...style, transform: `rotate(${rotation}deg)` };
 		style = {

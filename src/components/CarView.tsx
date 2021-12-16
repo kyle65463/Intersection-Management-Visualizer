@@ -28,7 +28,7 @@ function CarView({ car }: CarViewProps) {
 				height: `${carWidth}px`,
 			}}
 			ref={dragRef}
-			className={`z-10 bg-blue-400 absolute ${!car.started ? "" : "duration-1000"} text-xs`}
+			className={`z-10 bg-blue-400 absolute ${!car.started ? "" : "duration-500"} text-xs`}
 		>
 			car {car.id}
 		</div>
