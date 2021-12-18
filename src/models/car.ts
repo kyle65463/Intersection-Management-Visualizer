@@ -59,6 +59,7 @@ export const goStraight = (car: Car) => {
 		if (target instanceof Road) {
 			car.road = target;
 			car.zone = undefined;
+			car.ended = true;
 		}
 		if (target instanceof ConflictZone) {
 			car.zone = target;
@@ -79,8 +80,8 @@ export const goLeft = (car: Car) => {
 	const target = checkForward(car);
 	if (target) {
 		if (target instanceof Road) {
-			car.road = target;
-			car.zone = undefined;
+			goStraight(car);
+			return;
 		}
 		if (target instanceof ConflictZone) {
 			car.zone = target;
@@ -111,8 +112,8 @@ export const goRight = (car: Car) => {
 	const target = checkForward(car);
 	if (target) {
 		if (target instanceof Road) {
-			car.road = target;
-			car.zone = undefined;
+			goStraight(car);
+			return;
 		}
 		if (target instanceof ConflictZone) {
 			car.zone = target;
@@ -158,4 +159,5 @@ export class Car {
 	public zone?: ConflictZone;
 	public started = false;
 	public turning: Turning = "none";
+	public ended = false;
 }

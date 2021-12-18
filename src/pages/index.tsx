@@ -67,26 +67,20 @@ function Home() {
 				<button
 					className='btn'
 					onClick={() => {
-						goLeft(car);
-						setCar({ ...car });
-					}}
-				>
-					left
-				</button>
-				<button
-					className='btn'
-					onClick={() => {
-						goRight(car);
-						setCar({ ...car });
-					}}
-				>
-					right
-				</button>
-				<button
-					className='btn'
-					onClick={() => {
-						goStraight(car);
-						setCar({ ...car });
+						setInterval(() => {
+							if (!car.ended) {
+								const p = Math.random();
+								if (p > 0.5) {
+									goStraight(car);
+								} else if (p > 0.25) {
+									goRight(car);
+								} else {
+									goLeft(car);
+								}
+
+								setCar({ ...car });
+							}
+						}, 200);
 					}}
 				>
 					foward
