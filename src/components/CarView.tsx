@@ -2,7 +2,7 @@ import React from "react";
 import { useDrag } from "react-dnd";
 import { Car, colorToStyle } from "../models/car";
 import { carLength, carWidth, ItemTypes } from "../utils/constants";
-import { getCarPos } from "../utils/position_utils";
+import { getCarPos, getDemoCarPos } from "../utils/position_utils";
 
 interface CarViewProps {
 	car: Car;
@@ -24,7 +24,7 @@ function CarView({ car, demo }: CarViewProps) {
 	return (
 		<div
 			style={{
-				...getCarPos(car),
+				...(demo ? getDemoCarPos() : getCarPos(car)),
 				width: `${carLength}px`,
 				height: `${carWidth}px`,
 			}}

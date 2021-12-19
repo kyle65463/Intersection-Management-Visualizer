@@ -68,7 +68,6 @@ function Home() {
 				<button
 					className='btn'
 					onClick={() => {
-						console.log(cars);
 						for (const car of cars) {
 							setInterval(() => {
 								if (!car.ended) {

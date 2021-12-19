@@ -128,8 +128,9 @@ export function getCarPos({ road, zone, rotation, turning, dir, idOnRoad }: Car)
 				style = {
 					...style,
 					top: `${
-						getZonePos(road.id, 0, { top: `-${roadWidth * (idOnRoad - 1)}px - ${(roadWidth - carLength) / 2}px` })
-							.top
+						getZonePos(road.id, 0, {
+							top: `-${roadWidth * (idOnRoad - 1)}px - ${(roadWidth - carLength) / 2}px`,
+						}).top
 					}`,
 				};
 				style = {
@@ -210,4 +211,68 @@ export function getCarPos({ road, zone, rotation, turning, dir, idOnRoad }: Car)
 		};
 	}
 	return style;
+}
+
+export function getRoadBtnPos(roads: Road[]) {
+	const { dir, numRoads, id: roadId } = roads[roads.length - 1];
+	let style = {};
+	if (dir === "top" || dir === "bot") {
+		const startIndex = ~~((ConflictZone.numCols - numRoads) / 2) + 1;
+		style = { ...style, transform: "rotate(90deg)", transformOrigin: "left top" };
+		style = { ...style, width: `${vertRoadLength}px` };
+		style = {
+			...style,
+			left: getZonePos(roadId + 1 + startIndex, 0, {
+				left: `${roadBorderWidth}px`,
+			}).left,
+		};
+		if (dir === "bot") {
+			style = {
+				...style,
+				top: `${
+					getZonePos(roadId, ConflictZone.numRows - 1, {
+						top: `${roadWidth}px`,
+					}).top
+				}`,
+				display: "flex",
+				"justify-content": "end",
+			};
+		} else {
+			style = {
+				...style,
+				top: `${getZonePos(roadId, 0, { top: `-${vertRoadLength}px` }).top}`,
+			};
+		}
+	} else {
+		const startIndex = ~~((ConflictZone.numRows - numRoads) / 2) + 1;
+		style = { ...style, width: `${horizRoadLength}px` };
+		style = { ...style, top: getZonePos(0, roadId + startIndex).top };
+		if (dir === "right") {
+			style = {
+				...style,
+				left: `${
+					getZonePos(ConflictZone.numCols - 1, roadId, {
+						left: `${roadWidth}px`,
+					}).left
+				}`,
+				display: 'flex',
+				'justify-content': 'end',
+			};
+		} else {
+			style = {
+				...style,
+				left: `${getZonePos(0, roadId, { left: `-${horizRoadLength}px` }).left}`,
+			};
+		}
+	}
+	return style;
+}
+
+export function getDemoCarPos() {
+	const leftRoad = new Road(-3, 'top');
+	const topRoad = new Road(-1.5, 'left');
+	return { 
+		top: (getRoadPos(topRoad) as any).top,
+		left: (getRoadPos(leftRoad) as any).left,
+	}
 }

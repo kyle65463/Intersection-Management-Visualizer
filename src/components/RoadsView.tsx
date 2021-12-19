@@ -1,5 +1,6 @@
 import React from "react";
 import { Road, Direction } from "../models/road";
+import { getRoadBtnPos, getRoadPos } from "../utils/position_utils";
 import RoadView from "./RoadView";
 
 interface RoadsViewProps {
@@ -12,22 +13,27 @@ interface RoadsViewProps {
 function RoadsView({ dir, roads, addRoad, moveCar }: RoadsViewProps) {
 	return (
 		<>
-			<h1>{dir}</h1>
 			{roads.map((road) => (
-				<RoadView
-					key={road.id}
-					road={road}
-					moveCar={(carId: number) => moveCar(carId, road)}
-				/>
+				<RoadView key={road.id} road={road} moveCar={(carId: number) => moveCar(carId, road)} />
 			))}
-			<button
-				className='btn'
-				onClick={() => {
-					addRoad(new Road(roads.length, dir));
-				}}
-			>
-				add
-			</button>
+			<div className='absolute flex items-center text-center' style={getRoadBtnPos(roads)}>
+				<button
+					className='text-4xl font-light px-3 text-gray-600'
+					onClick={() => {
+						addRoad(new Road(roads.length, dir));
+					}}
+				>
+					+
+				</button>
+				<button
+					className='text-4xl font-light px-3 text-gray-600'
+					onClick={() => {
+						addRoad(new Road(roads.length, dir));
+					}}
+				>
+					-
+				</button>
+			</div>
 		</>
 	);
 }
