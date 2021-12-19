@@ -37,7 +37,7 @@ function useCars(updateRoad: (road: Road) => void) {
 		}
 	};
 
-	return { cars, demoCar, moveCar };
+	return { cars, demoCar, moveCar, setCars };
 }
 
 export default useCars;

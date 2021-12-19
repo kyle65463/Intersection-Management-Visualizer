@@ -29,9 +29,7 @@ function CarView({ car, demo }: CarViewProps) {
 				height: `${demo ? carWidth * 1.7 : carWidth}px`,
 			}}
 			ref={dragRef}
-			className={`z-10 ${colorToStyle(car.color)} absolute ${
-				!car.started ? "" : "duration-500"
-			} text-xs cursor-pointer rounded-md`}
+			className={`z-10 ${colorToStyle(car.color)} absolute duration-500 text-xs cursor-pointer rounded-md`}
 		></div>
 	);
 }

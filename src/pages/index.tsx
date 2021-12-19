@@ -31,7 +31,7 @@ function Home() {
 		[roadCollections]
 	);
 
-	const { cars, demoCar, moveCar } = useCars(updateRoad);
+	const { cars, demoCar, moveCar, setCars } = useCars(updateRoad);
 
 	useEffect(() => {
 		let col = 0;
@@ -80,7 +80,7 @@ function Home() {
 									} else {
 										goLeft(car);
 									}
-									// setCars([...cars.filter((c) => c.id != car.id), car]);
+									setCars([...cars.filter((c) => c.id != car.id), car]);
 								}
 							}, 200);
 						}
