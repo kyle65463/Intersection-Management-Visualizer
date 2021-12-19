@@ -25,16 +25,14 @@ function CarView({ car, demo }: CarViewProps) {
 		<div
 			style={{
 				...(demo ? getDemoCarPos() : getCarPos(car)),
-				width: `${carLength}px`,
-				height: `${carWidth}px`,
+				width: `${demo ? carLength * 1.7 : carLength}px`,
+				height: `${demo ? carWidth * 1.7 : carWidth}px`,
 			}}
 			ref={dragRef}
 			className={`z-10 ${colorToStyle(car.color)} absolute ${
 				!car.started ? "" : "duration-500"
-			} text-xs cursor-pointer`}
-		>
-			car {car.id}
-		</div>
+			} text-xs cursor-pointer rounded-md`}
+		></div>
 	);
 }
 

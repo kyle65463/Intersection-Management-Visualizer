@@ -12,13 +12,14 @@ import { Road, Direction } from "../models/road";
 
 function Home() {
 	const dirs: Direction[] = ["left", "right", "top", "bot"];
-	const [roadCollections, setRoads] = useState(dirs.map((dir) => ({ dir, roads: [new Road(0, dir)] })));
+	const [roadCollections, setRoads] = useState(
+		dirs.map((dir) => ({ dir, roads: [new Road(0, dir), new Road(1, dir)] }))
+	);
 	const { zones, setSize } = useConflictZones();
-	
 
 	const updateRoad = useCallback(
-		(road: Road) =>{
-			console.log(`update ${road.id} ${road.dir}`)
+		(road: Road) => {
+			console.log(`update ${road.id} ${road.dir}`);
 			const roadsId = roadCollections.findIndex((roads) => roads.dir === road.dir);
 			if (!roadCollections[roadsId].roads.find((e) => e.id == road.id)) {
 				// Add new road

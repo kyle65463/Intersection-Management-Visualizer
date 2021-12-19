@@ -269,8 +269,8 @@ export function getRoadBtnPos(roads: Road[]) {
 }
 
 export function getDemoCarPos() {
-	const leftRoad = new Road(-3, 'top');
-	const topRoad = new Road(-1.5, 'left');
+	const leftRoad = new Road(-4, 'top');
+	const topRoad = new Road(-2, 'left');
 	return { 
 		top: (getRoadPos(topRoad) as any).top,
 		left: (getRoadPos(leftRoad) as any).left,

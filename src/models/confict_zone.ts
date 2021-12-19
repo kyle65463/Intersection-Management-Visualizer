@@ -13,7 +13,7 @@ export class ConflictZone {
 }
 
 export function useConflictZones() {
-	const [size, setSize] = useState({ col: 1, row: 1 });
+	const [size, setSize] = useState({ col: 2, row: 2 });
 	const [zones, setZones] = useState<ConflictZone[]>([]);
 	useEffect(() => {
 		ConflictZone.numCols = size.col;
