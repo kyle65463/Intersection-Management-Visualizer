@@ -23,7 +23,7 @@ function RoadView({ road, moveCar }: RoadViewProps) {
 			className='bg-gray-300 border-y-2 border-gray-500 absolute'
 			ref={drop}
 		>
-			road {id}
+			road {id} {road.numCars}
 		</div>
 	);
 }

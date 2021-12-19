@@ -14,17 +14,23 @@ function Home() {
 	const dirs: Direction[] = ["left", "right", "top", "bot"];
 	const [roadCollections, setRoads] = useState(dirs.map((dir) => ({ dir, roads: [new Road(0, dir)] })));
 	const { zones, setSize } = useConflictZones();
-	const { cars, demoCar, moveCar } = useCars();
+	
 
-	const addRoad = useCallback(
-		(road: Road) => {
+	const updateRoad = useCallback(
+		(road: Road) =>{
+			console.log(`update ${road.id} ${road.dir}`)
 			const roadsId = roadCollections.findIndex((roads) => roads.dir === road.dir);
-			roadCollections[roadsId].roads.push(road);
+			if (!roadCollections[roadsId].roads.find((e) => e.id == road.id)) {
+				// Add new road
+				roadCollections[roadsId].roads.push(road);
+			}
 			Road.numAllRoads[road.dir] = roadCollections[roadsId].roads.length;
 			setRoads([...roadCollections]);
 		},
 		[roadCollections]
 	);
+
+	const { cars, demoCar, moveCar } = useCars(updateRoad);
 
 	useEffect(() => {
 		let col = 0;
@@ -51,7 +57,7 @@ function Home() {
 					<CarView key={car.id} car={car} />
 				))}
 				{roadCollections.map((roads, i) => (
-					<RoadsView key={i} {...roads} addRoad={addRoad} moveCar={moveCar} />
+					<RoadsView key={i} {...roads} addRoad={updateRoad} moveCar={moveCar} />
 				))}
 				{zones.map((zone, i) => (
 					<ConflictZoneView key={i} zone={zone} />

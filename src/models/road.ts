@@ -1,3 +1,5 @@
+import { Car } from "./car";
+
 export type Direction = "left" | "right" | "top" | "bot";
 
 export const dirRoation = {
@@ -23,6 +25,21 @@ export class Road {
 
 	public id: number;
 	public dir: Direction;
+	public cars: Car[] = [];
+
+	public addCar = (car: Car) => {
+		this.cars.push(car);
+	};
+
+	public removeCar = (car: Car) => {
+		this.cars = this.cars.filter((e) => e.id != car.id);
+		for(const c of this.cars) {
+			if(c.idOnRoad && car.idOnRoad && c.idOnRoad > car.idOnRoad) {
+				c.idOnRoad--;
+			}
+		}
+	};
+
 	static numAllRoads = {
 		left: 1,
 		right: 1,
@@ -32,5 +49,9 @@ export class Road {
 
 	get numRoads() {
 		return Road.numAllRoads[this.dir];
+	}
+
+	get numCars() {
+		return this.cars.length;
 	}
 }

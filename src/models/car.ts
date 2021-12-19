@@ -171,6 +171,7 @@ export class Car {
 		this.rotation = dirRoation[road.dir];
 		this.dir = oppositeDir(road.dir);
 		this.road = road;
+		this.idOnRoad = road.numCars;
 	};
 
 	public setRandomColor = (exclude?: Color) => {
@@ -188,6 +189,7 @@ export class Car {
 	public dir: Direction = "right";
 	public rotation: number = 0;
 	public road?: Road;
+	public idOnRoad?: number;
 	public zone?: ConflictZone;
 	public started = false;
 	public turning: Turning = "none";
