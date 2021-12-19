@@ -1,19 +1,20 @@
 import Head from "next/head";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import CarView from "../components/CarView";
 import ConflictZoneView from "../components/ConflictZoneView";
 import RoadsView from "../components/RoadsView";
-import { Car, goLeft, goRight, goStraight } from "../models/car";
-import { ConflictZone, useConflictZones } from "../models/confict_zone";
+import useCars from "../hooks/useCars";
+import { goLeft, goRight, goStraight } from "../models/car";
+import { useConflictZones } from "../models/confict_zone";
 import { Road, Direction } from "../models/road";
 
 function Home() {
 	const dirs: Direction[] = ["left", "right", "top", "bot"];
 	const [roadCollections, setRoads] = useState(dirs.map((dir) => ({ dir, roads: [new Road(0, dir)] })));
 	const { zones, setSize } = useConflictZones();
-	const [car, setCar] = useState(new Car(0));
+	const { cars, demoCar, moveCar } = useCars();
 
 	const addRoad = useCallback(
 		(road: Road) => {
@@ -37,6 +38,7 @@ function Home() {
 		});
 		setSize({ col, row });
 	}, [roadCollections]);
+
 	return (
 		<DndProvider backend={HTML5Backend}>
 			<Head>
@@ -44,19 +46,12 @@ function Home() {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main className='container mx-auto py-5 relative min-h-screen'>
-				<CarView car={car} />
+				<CarView key={demoCar.id} car={demoCar} demo />
+				{cars.map((car) => (
+					<CarView key={car.id} car={car} />
+				))}
 				{roadCollections.map((roads, i) => (
-					<RoadsView
-						key={i}
-						{...roads}
-						addRoad={addRoad}
-						moveCar={(carId: number, road: Road) => {
-							if (!car.started) {
-								car.setInitialRoad(road);
-								setCar({ ...car });
-							}
-						}}
-					/>
+					<RoadsView key={i} {...roads} addRoad={addRoad} moveCar={moveCar} />
 				))}
 				{zones.map((zone, i) => (
 					<ConflictZoneView key={i} zone={zone} />
@@ -67,20 +62,22 @@ function Home() {
 				<button
 					className='btn'
 					onClick={() => {
-						setInterval(() => {
-							if (!car.ended) {
-								const p = Math.random();
-								if (p > 0.5) {
-									goStraight(car);
-								} else if (p > 0.25) {
-									goRight(car);
-								} else {
-									goLeft(car);
+						console.log(cars);
+						for (const car of cars) {
+							setInterval(() => {
+								if (!car.ended) {
+									const p = Math.random();
+									if (p > 0.5) {
+										goStraight(car);
+									} else if (p > 0.25) {
+										goRight(car);
+									} else {
+										goLeft(car);
+									}
+									// setCars([...cars.filter((c) => c.id != car.id), car]);
 								}
-
-								setCar({ ...car });
-							}
-						}, 200);
+							}, 200);
+						}
 					}}
 				>
 					foward

@@ -140,16 +140,48 @@ export const goRight = (car: Car) => {
 };
 
 type Turning = "clockwise" | "anti-clockwise" | "none";
+type Color = "blue" | "red" | "green" | "yellow" | "amber" | "indigo" | "sky";
+
+export function colorToStyle(color: Color) {
+	switch (color) {
+		case "blue":
+			return "bg-blue-400";
+		case "red":
+			return "bg-red-400";
+		case "green":
+			return "bg-green-400";
+		case "yellow":
+			return "bg-yellow-400";
+		case "amber":
+			return "bg-amber-400";
+		case "indigo":
+			return "bg-indigo-400";
+		case "sky":
+			return "bg-sky-400";
+	}
+}
 
 export class Car {
-	constructor(id: number) {
+	constructor(id: number, color?: Color) {
 		this.id = id;
+		this.color = color ?? "blue";
 	}
 
 	public setInitialRoad = (road: Road) => {
 		this.rotation = dirRoation[road.dir];
 		this.dir = oppositeDir(road.dir);
 		this.road = road;
+	};
+
+	public setRandomColor = (exclude?: Color) => {
+		const colors: any = ["blue", "red", "green", "yellow", "amber", "indigo", "sky"];
+		let rand = Math.floor(Math.random() * Object.keys(colors).length);
+		let randColor: Color = colors[Object.keys(colors)[rand]];
+		while (randColor == exclude) {
+			rand = Math.floor(Math.random() * Object.keys(colors).length);
+			randColor = colors[Object.keys(colors)[rand]];
+		}
+		this.color = randColor;
 	};
 
 	public id: number;
@@ -160,4 +192,5 @@ export class Car {
 	public started = false;
 	public turning: Turning = "none";
 	public ended = false;
+	public color: Color = "blue";
 }

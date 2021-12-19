@@ -1,14 +1,15 @@
 import React from "react";
 import { useDrag } from "react-dnd";
-import { Car } from "../models/car";
+import { Car, colorToStyle } from "../models/car";
 import { carLength, carWidth, ItemTypes } from "../utils/constants";
 import { getCarPos } from "../utils/position_utils";
 
 interface CarViewProps {
 	car: Car;
+	demo?: boolean;
 }
 
-function CarView({ car }: CarViewProps) {
+function CarView({ car, demo }: CarViewProps) {
 	const [{ opacity }, dragRef] = useDrag(
 		() => ({
 			type: ItemTypes.CAR,
@@ -28,7 +29,9 @@ function CarView({ car }: CarViewProps) {
 				height: `${carWidth}px`,
 			}}
 			ref={dragRef}
-			className={`z-10 bg-blue-400 absolute ${!car.started ? "" : "duration-500"} text-xs`}
+			className={`z-10 ${colorToStyle(car.color)} absolute ${
+				!car.started ? "" : "duration-500"
+			} text-xs cursor-pointer`}
 		>
 			car {car.id}
 		</div>
