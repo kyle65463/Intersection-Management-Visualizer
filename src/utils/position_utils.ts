@@ -1,6 +1,6 @@
 import { Car } from "../models/car";
 import { ConflictZone } from "../models/confict_zone";
-import { Direction, Road } from "../models/road";
+import { Road } from "../models/road";
 import { carLength, carWidth, horizRoadLength, roadBorderWidth, roadWidth, vertRoadLength } from "./constants";
 
 export function getRoadPos({ dir, numRoads, id: roadId }: Road) {
@@ -235,7 +235,7 @@ export function getRoadBtnPos(roads: Road[]) {
 					}).top
 				}`,
 				display: "flex",
-				"justify-content": "end",
+				justifyContent: "end",
 			};
 		} else {
 			style = {
@@ -255,8 +255,8 @@ export function getRoadBtnPos(roads: Road[]) {
 						left: `${roadWidth}px`,
 					}).left
 				}`,
-				display: 'flex',
-				'justify-content': 'end',
+				display: "flex",
+				justifyContent: "end",
 			};
 		} else {
 			style = {
@@ -269,10 +269,10 @@ export function getRoadBtnPos(roads: Road[]) {
 }
 
 export function getDemoCarPos() {
-	const leftRoad = new Road(-4, 'top');
-	const topRoad = new Road(-2, 'left');
-	return { 
+	const leftRoad = new Road(-4, "top");
+	const topRoad = new Road(-2, "left");
+	return {
 		top: (getRoadPos(topRoad) as any).top,
 		left: (getRoadPos(leftRoad) as any).left,
-	}
+	};
 }
