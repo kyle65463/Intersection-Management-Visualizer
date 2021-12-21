@@ -1,6 +1,6 @@
 export type Direction = "left" | "right" | "top" | "bot";
 
-export const dirs = [];
+export const dirs: Direction[] = ["left", "right", "top", "bot"];
 
 export const dirRoation = {
 	left: 0,

@@ -1,151 +1,64 @@
+import { Intersection } from "../hooks/useCars";
 import { Direction, dirRoation, relativeDir } from "../utils/dir_utils";
+import { getZoneFrontOfCar } from "../utils/zone_utils";
 import { ConflictZone } from "./confict_zone";
 import { Road } from "./road";
 
-export function checkForward(car: Car): Road | ConflictZone | undefined {
-	const { road, zone, dir } = car;
-	if (zone) {
-		if (dir === "right") {
-			if (zone.col == ConflictZone.numCols - 1) {
-				const id = ~~((ConflictZone.numRows - Road.numAllRoads.right) / 2);
-				return new Road(zone.row - id, "right");
-			} else {
-				return new ConflictZone(zone.col + 1, zone.row);
-			}
-		} else if (dir === "left") {
-			if (zone.col == 0) {
-				const id = ~~((ConflictZone.numRows - Road.numAllRoads.left) / 2);
-				return new Road(zone.row - id, "left");
-			} else {
-				return new ConflictZone(zone.col - 1, zone.row);
-			}
-		} else if (dir === "top") {
-			if (zone.row == 0) {
-				const id = ~~((ConflictZone.numCols - Road.numAllRoads.top) / 2);
-				return new Road(zone.col - id, "top");
-			} else {
-				return new ConflictZone(zone.col, zone.row - 1);
-			}
-		} else {
-			if (zone.row == ConflictZone.numRows - 1) {
-				const id = ~~((ConflictZone.numCols - Road.numAllRoads.bot) / 2);
-				return new Road(zone.col - id, "bot");
-			} else {
-				return new ConflictZone(zone.col, zone.row + 1);
-			}
-		}
-	} else if (road) {
-		if (road.dir === "right") {
-			const offset = ~~((ConflictZone.numRows - Road.numAllRoads.right) / 2);
-			return new ConflictZone(ConflictZone.numCols - 1, offset + road.id);
-		} else if (road.dir === "left") {
-			const offset = ~~((ConflictZone.numRows - Road.numAllRoads.left) / 2);
-			return new ConflictZone(0, offset + road.id);
-		} else if (road.dir === "top") {
-			const offset = ~~((ConflictZone.numCols - Road.numAllRoads.top) / 2);
-			return new ConflictZone(offset + road.id, 0);
-		} else {
-			const offset = ~~((ConflictZone.numCols - Road.numAllRoads.bot) / 2);
-			return new ConflictZone(offset + road.id, ConflictZone.numRows - 1);
-		}
-	}
-}
-
-export const goStraight = (car: Car) => {
+export const goStraight = (car: Car, intersection: Intersection) => {
 	car.started = true;
-	if (car.road && car.idOnRoad && car.idOnRoad > 1) {
+	if (car.curZone instanceof Road && car.idOnRoad > 1) {
 		car.idOnRoad--;
 		return;
 	}
-	const target = checkForward(car);
-	if (target) {
-		if (target instanceof Road) {
-			car.road = target;
-			car.zone = undefined;
-			car.viewInfo.isEnd = true;
-		}
-		if (target instanceof ConflictZone) {
-			car.zone = target;
-			car.road = undefined;
-		}
+	const target = getZoneFrontOfCar(car, intersection);
+	console.log(target);
+	if (!target) return; // Action not valid
+	if (target instanceof Road) {
+		car.viewInfo.isEnd = true;
 	}
-	if (car.turning === "clockwise") {
-		car.rotation += 45;
-	}
-	if (car.turning === "anti-clockwise") {
-		car.rotation -= 45;
-	}
+	car.curZone = target;
+	if (car.turning === "clockwise") car.rotation += 45;
+	if (car.turning === "anti-clockwise") car.rotation -= 45;
+
 	car.turning = "none";
 };
 
-export const goLeft = (car: Car) => {
+export const goLeft = (car: Car, intersection: Intersection) => {
 	car.started = true;
-	if (car.road && car.idOnRoad && car.idOnRoad > 1) {
+	if (car.curZone instanceof Road && car.idOnRoad > 1) {
 		car.idOnRoad--;
 		return;
 	}
-	const target = checkForward(car);
-	if (target) {
-		if (target instanceof Road) {
-			goStraight(car);
-			return;
-		}
-		if (target instanceof ConflictZone) {
-			car.zone = target;
-			car.road = undefined;
-		}
+	const target = getZoneFrontOfCar(car, intersection);
+	if (!target) return; // Action not valid
+	if (target instanceof Road) {
+		car.viewInfo.isEnd = true;
 	}
-	if (car.dir === "right") {
-		car.dir = "top";
-	} else if (car.dir === "left") {
-		car.dir = "bot";
-	} else if (car.dir === "top") {
-		car.dir = "left";
-	} else {
-		car.dir = "right";
-	}
-	if (car.turning === "clockwise") {
-		car.rotation += 45;
-	}
-	if (car.turning === "anti-clockwise") {
-		car.rotation -= 45;
-	}
+	car.curZone = target;
+	if (car.turning === "clockwise") car.rotation += 45;
+	if (car.turning === "anti-clockwise") car.rotation -= 45;
+
+	car.dir = relativeDir(car.dir, "anti-clockwise");
 	car.rotation -= 45;
 	car.turning = "anti-clockwise";
 };
 
-export const goRight = (car: Car) => {
+export const goRight = (car: Car, intersection: Intersection) => {
 	car.started = true;
-	if (car.road && car.idOnRoad && car.idOnRoad > 1) {
+	if (car.curZone instanceof Road && car.idOnRoad > 1) {
 		car.idOnRoad--;
 		return;
 	}
-	const target = checkForward(car);
-	if (target) {
-		if (target instanceof Road) {
-			goStraight(car);
-			return;
-		}
-		if (target instanceof ConflictZone) {
-			car.zone = target;
-			car.road = undefined;
-		}
+	const target = getZoneFrontOfCar(car, intersection);
+	if (!target) return; // Action not valid
+	if (target instanceof Road) {
+		car.viewInfo.isEnd = true;
 	}
-	if (car.dir === "right") {
-		car.dir = "bot";
-	} else if (car.dir === "left") {
-		car.dir = "top";
-	} else if (car.dir === "top") {
-		car.dir = "right";
-	} else {
-		car.dir = "left";
-	}
-	if (car.turning === "clockwise") {
-		car.rotation += 45;
-	}
-	if (car.turning === "anti-clockwise") {
-		car.rotation -= 45;
-	}
+	car.curZone = target;
+	if (car.turning === "clockwise") car.rotation += 45;
+	if (car.turning === "anti-clockwise") car.rotation -= 45;
+
+	car.dir = relativeDir(car.dir, "clockwise");
 	car.rotation += 45;
 	car.turning = "clockwise";
 };
@@ -187,8 +100,10 @@ export class Car {
 	public setInitialRoad = (road: Road) => {
 		this.rotation = dirRoation[road.dir];
 		this.dir = relativeDir(road.dir, "opposite");
-		this.road = road;
+		this.curZone = road;
 		this.idOnRoad = road.numCars;
+		this.initialRoad = road;
+		this.initialIdOnRoad = road.numCars;
 	};
 
 	public setRandomColor = (exclude?: Color) => {
@@ -205,9 +120,10 @@ export class Car {
 	public id: number;
 	public dir: Direction = "right";
 	public rotation: number = 0;
-	public road?: Road;
-	public idOnRoad?: number;
-	public zone?: ConflictZone;
+	public idOnRoad: number = -1;
+	public initialRoad: Road = new Road(0, "right");
+	public initialIdOnRoad: number = -1;
+	public curZone: ConflictZone | Road = new Road(0, "right");
 	public started = false;
 	public turning: Turning = "none";
 	public color: Color = "blue";

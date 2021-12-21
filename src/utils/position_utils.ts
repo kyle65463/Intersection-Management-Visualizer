@@ -68,9 +68,10 @@ export function getZonePos(
 	return style;
 }
 
-export function getCarPos({ road, zone, rotation, turning, dir, idOnRoad }: Car) {
+export function getCarPos({ curZone: zone, rotation, turning, dir, idOnRoad }: Car) {
 	let style = {};
-	if (road && idOnRoad) {
+	if (zone instanceof Road) {
+		const road = zone;
 		const numRoads = road?.numRoads;
 		if (road.dir === "left") {
 			const startIndex = ~~((ConflictZone.numRows - numRoads) / 2);

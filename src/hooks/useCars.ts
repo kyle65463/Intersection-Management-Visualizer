@@ -9,7 +9,7 @@ interface RoadCollection {
 	roads: Road[];
 }
 
-interface Intersection {
+export interface Intersection {
 	demoCar: Car;
 	cars: Car[];
 	roadCollections: RoadCollection[];
@@ -98,9 +98,7 @@ function useCars() {
 				const { cars } = intersection;
 				const car = cars.find((car) => car.id == carId);
 				if (car) {
-					if (car.road) {
-						car.road.removeCar(car);
-					}
+					car.initialRoad.removeCar(car);
 					road.addCar(car);
 					car.setInitialRoad(road);
 				}
@@ -113,9 +111,18 @@ function useCars() {
 		}
 	};
 
+	const setCars = useCallback((cars: Car[]) => {
+		setIntersection((intersection) => {
+			intersection.cars = cars;
+			return { ...intersection };
+		});
+	}, []);
+
 	return {
+		intersection,
 		moveCar,
 		addRoad,
+		setCars,
 		...intersection,
 	};
 }

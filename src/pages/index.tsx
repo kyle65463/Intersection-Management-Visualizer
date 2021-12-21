@@ -11,7 +11,7 @@ import { goLeft, goRight, goStraight } from "../models/car";
 function Home() {
 	const [int, setInt] = useState<NodeJS.Timer | undefined>(undefined);
 	const [isStart, setIsStart] = useState(false);
-	const { cars, demoCar, moveCar, addRoad, roadCollections, zones } = useCars();
+	const { intersection, cars, demoCar, moveCar, addRoad, roadCollections, zones, setCars } = useCars();
 
 	return (
 		<DndProvider backend={HTML5Backend}>
@@ -31,43 +31,68 @@ function Home() {
 					<ConflictZoneView key={i} zone={zone} />
 				))}
 
+				<div style={{ bottom: "100px", right: "270px" }} className='absolute flex flex-col justify-end'>
+					<button
+						className='btn'
+						onClick={() => {
+							for (const car of cars) {
+								if (!car.viewInfo.isEnd) {
+									goLeft(car, intersection);
+								}
+							}
+							setCars([...cars]);
+						}}
+					>
+						left
+					</button>
+				</div>
 				<div style={{ bottom: "100px", right: "150px" }} className='absolute flex flex-col justify-end'>
 					<button
 						className='btn btn-accent'
 						disabled={isStart}
 						onClick={() => {
+							// for (const car of cars) {
+							// 	if (!car.viewInfo.isEnd) {
+							// 		goStraight(car, intersection);
+							// 	}
+							// }
+							// console.log(cars);
+							// setCars([...cars]);
 							const interval = setInterval(() => {
 								for (const car of cars) {
 									if (!car.viewInfo.isEnd) {
 										const p = Math.random();
 										if (p > 0.5) {
-											goStraight(car);
+											goStraight(car, intersection);
 										} else if (p > 0.25) {
-											goRight(car);
+											goRight(car, intersection);
 										} else {
-											goLeft(car);
+											goLeft(car, intersection);
 										}
 									}
 								}
-								// setCars([...cars]);
+								setCars([...cars]);
 							}, 200);
 							setIsStart(true);
 							setInt(interval);
 						}}
 					>
-						Start
+						straight
 					</button>
 				</div>
 				<div style={{ bottom: "100px", right: "60px" }} className='absolute flex flex-col justify-end'>
 					<button
 						className='btn'
 						onClick={() => {
-							if (int) clearInterval(int);
-							// resetCars();
-							setIsStart(false);
+							for (const car of cars) {
+								if (!car.viewInfo.isEnd) {
+									goRight(car, intersection);
+								}
+							}
+							setCars([...cars]);
 						}}
 					>
-						Reset
+						right
 					</button>
 				</div>
 			</main>
