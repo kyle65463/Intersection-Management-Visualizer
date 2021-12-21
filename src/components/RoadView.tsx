@@ -22,8 +22,7 @@ function RoadView({ road, moveCar }: RoadViewProps) {
 			style={{ ...getRoadPos(road), height: `${roadWidth}px` }}
 			className='bg-gray-300 border-y-2 border-gray-500 absolute'
 			ref={drop}
-		>
-		</div>
+		></div>
 	);
 }
 

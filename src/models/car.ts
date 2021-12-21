@@ -5,9 +5,7 @@ function checkForward(car: Car): Road | ConflictZone | undefined {
 	const { road, zone, dir } = car;
 	if (zone) {
 		if (dir === "right") {
-			console.log("go right");
 			if (zone.col == ConflictZone.numCols - 1) {
-				console.log("last one");
 				const id = ~~((ConflictZone.numRows - Road.numAllRoads.right) / 2);
 				return new Road(zone.row - id, "right");
 			} else {
@@ -54,6 +52,10 @@ function checkForward(car: Car): Road | ConflictZone | undefined {
 
 export const goStraight = (car: Car) => {
 	car.started = true;
+	if (car.road && car.idOnRoad && car.idOnRoad > 1) {
+		car.idOnRoad--;
+		return;
+	}
 	const target = checkForward(car);
 	if (target) {
 		if (target instanceof Road) {
@@ -77,6 +79,10 @@ export const goStraight = (car: Car) => {
 
 export const goLeft = (car: Car) => {
 	car.started = true;
+	if (car.road && car.idOnRoad && car.idOnRoad > 1) {
+		car.idOnRoad--;
+		return;
+	}
 	const target = checkForward(car);
 	if (target) {
 		if (target instanceof Road) {
@@ -109,6 +115,10 @@ export const goLeft = (car: Car) => {
 
 export const goRight = (car: Car) => {
 	car.started = true;
+	if (car.road && car.idOnRoad && car.idOnRoad > 1) {
+		car.idOnRoad--;
+		return;
+	}
 	const target = checkForward(car);
 	if (target) {
 		if (target instanceof Road) {

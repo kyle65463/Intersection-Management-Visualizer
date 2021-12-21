@@ -7,9 +7,10 @@ import { getCarPos, getDemoCarPos } from "../utils/position_utils";
 interface CarViewProps {
 	car: Car;
 	demo?: boolean;
+	canDrag: boolean;
 }
 
-function CarView({ car, demo }: CarViewProps) {
+function CarView({ car, demo, canDrag }: CarViewProps) {
 	const [{ opacity }, dragRef] = useDrag(
 		() => ({
 			type: ItemTypes.CAR,
@@ -28,8 +29,10 @@ function CarView({ car, demo }: CarViewProps) {
 				width: `${demo ? carLength * 1.7 : carLength}px`,
 				height: `${demo ? carWidth * 1.7 : carWidth}px`,
 			}}
-			ref={dragRef}
-			className={`z-10 ${colorToStyle(car.color)} absolute duration-500 text-xs cursor-pointer rounded-md`}
+			ref={canDrag ? dragRef : undefined}
+			className={`z-10 ${colorToStyle(car.color)} absolute duration-500 text-xs ${
+				canDrag ? "cursor-pointer" : ""
+			} rounded-md`}
 		></div>
 	);
 }

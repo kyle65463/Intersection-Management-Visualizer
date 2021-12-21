@@ -37,7 +37,11 @@ function useCars(updateRoad: (road: Road) => void) {
 		}
 	};
 
-	return { cars, demoCar, moveCar, setCars };
+	const resetCars = () => {
+		setCars([]);
+	};
+
+	return { cars, demoCar, moveCar, setCars, resetCars };
 }
 
 export default useCars;

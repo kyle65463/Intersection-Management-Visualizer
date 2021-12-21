@@ -16,10 +16,11 @@ function Home() {
 		dirs.map((dir) => ({ dir, roads: [new Road(0, dir), new Road(1, dir)] }))
 	);
 	const { zones, setSize } = useConflictZones();
+	const [int, setInt] = useState<NodeJS.Timer | undefined>(undefined);
+	const [isStart, setIsStart] = useState(false);
 
 	const updateRoad = useCallback(
 		(road: Road) => {
-			console.log(`update ${road.id} ${road.dir}`);
 			const roadsId = roadCollections.findIndex((roads) => roads.dir === road.dir);
 			if (!roadCollections[roadsId].roads.find((e) => e.id == road.id)) {
 				// Add new road
@@ -31,7 +32,7 @@ function Home() {
 		[roadCollections]
 	);
 
-	const { cars, demoCar, moveCar, setCars } = useCars(updateRoad);
+	const { cars, demoCar, moveCar, setCars, resetCars } = useCars(updateRoad);
 
 	useEffect(() => {
 		let col = 0;
@@ -53,9 +54,9 @@ function Home() {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main className='container mx-auto py-5 relative min-h-screen'>
-				<CarView key={demoCar.id} car={demoCar} demo />
+				<CarView key={demoCar.id} car={demoCar} demo canDrag={!isStart} />
 				{cars.map((car) => (
-					<CarView key={car.id} car={car} />
+					<CarView key={car.id} car={car} canDrag={!isStart} />
 				))}
 				{roadCollections.map((roads, i) => (
 					<RoadsView key={i} {...roads} addRoad={updateRoad} moveCar={moveCar} />
@@ -63,32 +64,47 @@ function Home() {
 				{zones.map((zone, i) => (
 					<ConflictZoneView key={i} zone={zone} />
 				))}
-			</main>
 
-			<div className='flex flex-col justify-end'>
-				<button
-					className='btn'
-					onClick={() => {
-						for (const car of cars) {
-							setInterval(() => {
-								if (!car.ended) {
-									const p = Math.random();
-									if (p > 0.5) {
-										goStraight(car);
-									} else if (p > 0.25) {
-										goRight(car);
-									} else {
-										goLeft(car);
+				<div style={{ bottom: "100px", right: "150px" }} className='absolute flex flex-col justify-end'>
+					<button
+						className='btn btn-accent'
+						disabled={isStart}
+						onClick={() => {
+							const interval = setInterval(() => {
+								for (const car of cars) {
+									if (!car.ended) {
+										const p = Math.random();
+										if (p > 0.5) {
+											goStraight(car);
+										} else if (p > 0.25) {
+											goRight(car);
+										} else {
+											goLeft(car);
+										}
 									}
-									setCars([...cars.filter((c) => c.id != car.id), car]);
 								}
+								setCars([...cars]);
 							}, 200);
-						}
-					}}
-				>
-					foward
-				</button>
-			</div>
+							setIsStart(true);
+							setInt(interval);
+						}}
+					>
+						Start
+					</button>
+				</div>
+				<div style={{ bottom: "100px", right: "60px" }} className='absolute flex flex-col justify-end'>
+					<button
+						className='btn'
+						onClick={() => {
+							if (int) clearInterval(int);
+							resetCars([]);
+							setIsStart(false);
+						}}
+					>
+						Reset
+					</button>
+				</div>
+			</main>
 		</DndProvider>
 	);
 }
