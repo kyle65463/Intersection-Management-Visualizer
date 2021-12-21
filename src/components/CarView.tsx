@@ -32,9 +32,9 @@ function CarView({ car, demo, canDrag, intersection }: CarViewProps) {
 				height: `${demo ? carWidth * 1.7 : carWidth}px`,
 			}}
 			ref={canDrag ? dragRef : undefined}
-			className={`z-10 ${colorToStyle(car.color)} absolute duration-500 text-xs ${
-				canDrag ? "cursor-pointer" : ""
-			} rounded-md`}
+			className={`z-10 ${colorToStyle(car.color)} absolute ${
+				!car.started && !demo ? "" : "duration-500"
+			} text-xs ${canDrag ? "cursor-pointer" : ""} rounded-md`}
 		></div>
 	);
 }

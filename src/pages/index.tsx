@@ -11,7 +11,18 @@ import Move from "../models/move";
 function Home() {
 	const [int, setInt] = useState<NodeJS.Timer | undefined>(undefined);
 	const [isStart, setIsStart] = useState(false);
-	const { intersection, cars, demoCar, moveCar, addRoad, roadCollections, zones, setCars, reset } = useIntersection();
+	const {
+		intersection,
+		cars,
+		demoCar,
+		moveCar,
+		addRoad,
+		roadCollections,
+		zones,
+		setCars,
+		reset,
+		randomIntersection,
+	} = useIntersection();
 
 	return (
 		<DndProvider backend={HTML5Backend}>
@@ -31,15 +42,15 @@ function Home() {
 					<ConflictZoneView key={i} zone={zone} intersection={intersection} />
 				))}
 
-				<div style={{ bottom: "100px", right: "150px" }} className='absolute flex flex-col justify-end'>
+				<div style={{ bottom: "100px", right: "270px" }} className='absolute flex flex-col justify-end'>
 					<button
 						className='btn btn-accent'
 						disabled={isStart}
 						onClick={() => {
 							const interval = setInterval(() => {
-								const move = Move.generateRandomMove();
 								for (const car of cars) {
 									if (!car.isEnd) {
+										const move = Move.generateRandomMove();
 										move.perform(car, intersection);
 									}
 								}
@@ -52,7 +63,7 @@ function Home() {
 						Start
 					</button>
 				</div>
-				<div style={{ bottom: "100px", right: "60px" }} className='absolute flex flex-col justify-end'>
+				<div style={{ bottom: "100px", right: "177px" }} className='absolute flex flex-col justify-end'>
 					<button
 						className='btn'
 						disabled={!isStart}
@@ -63,6 +74,11 @@ function Home() {
 						}}
 					>
 						Reset
+					</button>
+				</div>
+				<div style={{ bottom: "100px", right: "60px" }} className='absolute flex flex-col justify-end'>
+					<button className='btn' disabled={isStart} onClick={randomIntersection}>
+						Random
 					</button>
 				</div>
 			</main>

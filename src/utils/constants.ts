@@ -9,3 +9,5 @@ export const roadBorderWidth = 2;
 
 export const carLength = 30;
 export const carWidth = 18;
+
+export const maxRoadNum = 10;

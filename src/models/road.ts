@@ -30,6 +30,7 @@ export class Road {
 			for (const c of this.cars) {
 				if (c.idOnRoad && car.idOnRoad && c.idOnRoad > car.idOnRoad) {
 					c.idOnRoad--;
+					c.initialIdOnRoad--;
 				}
 			}
 			this.initialCars = this.initialCars.filter((e) => e.id != car.id);

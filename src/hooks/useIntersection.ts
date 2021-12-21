@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import { Car } from "../models/car";
 import { ConflictZone } from "../models/confict_zone";
 import { Road } from "../models/road";
+import { maxRoadNum } from "../utils/constants";
 import { Direction, dirRoation, dirs, relativeDir } from "../utils/dir_utils";
 
 interface RoadCollection {
@@ -17,11 +18,26 @@ export interface Intersection {
 	zonesSize: { numCol: number; numRow: number };
 }
 
+function getRandomInt(min: number, max: number): number {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
+}
+
+function getRandomRoad({ roadCollections }: Intersection): Road | undefined {
+	const dir = dirs[Math.floor(Math.random() * dirs.length)];
+	const col = roadCollections.find((col) => col.dir == dir);
+	return col?.roads[Math.floor(Math.random() * col?.roads.length)];
+}
+
 const initialIntersection = (numCol: number, numRow: number): Intersection => {
 	const intersection: Intersection = {
 		demoCar: new Car(0),
 		cars: [],
-		roadCollections: dirs.map((dir) => ({ dir, roads: Array.from(Array(numCol), (_, i) => new Road(i, dir)) })),
+		roadCollections: dirs.map((dir) => ({
+			dir,
+			roads: Array.from(Array(dir == "top" || dir == "bot" ? numCol : numRow), (_, i) => new Road(i, dir)),
+		})),
 		zones: [],
 		zonesSize: { numCol, numRow },
 	};
@@ -34,7 +50,7 @@ const initialIntersection = (numCol: number, numRow: number): Intersection => {
 };
 
 function useIntersection() {
-	const [intersection, setIntersection] = useState<Intersection>(initialIntersection(2, 2));
+	const [intersection, setIntersection] = useState<Intersection>(initialIntersection(3, 2));
 	const nextCarId = useRef(2);
 
 	const updateZones = useCallback((intersection: Intersection) => {
@@ -65,7 +81,7 @@ function useIntersection() {
 			const { roadCollections } = intersection;
 			const roadsId = roadCollections.findIndex((roads) => roads.dir === road.dir);
 			if (!roadCollections[roadsId].roads.find((e) => e.id == road.id)) {
-				roadCollections[roadsId].roads.push(road);
+				if (roadCollections[roadsId].roads.length < maxRoadNum) roadCollections[roadsId].roads.push(road);
 			}
 			updateZones(intersection);
 			return { ...intersection };
@@ -117,9 +133,7 @@ function useIntersection() {
 		setIntersection((intersection) => {
 			const { roadCollections, cars } = intersection;
 			for (const col of roadCollections) {
-				console.log(col);
 				for (const road of col.roads) {
-					console.log(road);
 					road.cars = [...road.initialCars];
 				}
 			}
@@ -136,11 +150,35 @@ function useIntersection() {
 		});
 	}, []);
 
+	const randomIntersection = useCallback(() => {
+		const numCol = getRandomInt(3, 9);
+		const numRow = getRandomInt(3, 9);
+		const newIntersection = initialIntersection(numCol, numRow);
+		const numRoads = (numCol + numRow) * 2;
+		const numCar = getRandomInt(numRoads / 2, numRoads * 1.6);
+		for (let i = 0; i < numCar; i++) {
+			const { cars, demoCar } = newIntersection;
+			const car = new Car(nextCarId.current, demoCar.color);
+			nextCarId.current += 1;
+			const road = getRandomRoad(newIntersection);
+			if (road && road.cars.length < 4) {
+				road.addCar(car, true);
+				car.setInitialRoad(road);
+				cars.push(car);
+			}
+
+			// Regenerate a color for demo car
+			demoCar.setRandomColor(demoCar.color);
+		}
+		setIntersection(newIntersection);
+	}, []);
+
 	return {
 		intersection,
 		moveCar,
 		addRoad,
 		setCars,
+		randomIntersection,
 		reset,
 		...intersection,
 	};

@@ -28,9 +28,9 @@ export default abstract class Move {
 
 	static generateRandomMove(): Move {
 		const p = Math.random();
-		if (p > 0.5) {
+		if (p > 0.3) {
 			return new MoveForward();
-		} else if (p > 0.25) {
+		} else if (p > 0.15) {
 			return new MoveLeft();
 		} else {
 			return new MoveRight();
