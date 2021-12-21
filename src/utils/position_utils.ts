@@ -120,19 +120,19 @@ export function getCarPos({ curZone: zone, rotation, turning, dir, idOnRoad }: C
 			style = { ...style, width: `${vertRoadLength}px` };
 
 			if (road.dir === "bot") {
-				style = { ...style, transform: `rotate(${rotation}deg)`, transformOrigin: "left top" };
+				style = { ...style, transform: `rotate(${rotation}deg)` };
 				style = {
 					...style,
 					top: `${
 						getZonePos(road.id, numRow - 1, intersection, {
-							top: `${roadWidth * idOnRoad}px + ${(roadWidth - carLength) / 2}px`,
+							top: `${roadWidth * idOnRoad}px + ${(0.9 * carLength) / 2}px`,
 						}).top
 					}`,
 				};
 				style = {
 					...style,
 					left: getZonePos(road.id + startIndex, 0, intersection, {
-						left: `${roadBorderWidth / 2}px + ${carWidth}px + ${(roadWidth - carWidth) / 2}px`,
+						left: `${roadBorderWidth / 2}px + ${(0.83 * carWidth) / 2}px`,
 					}).left,
 				};
 			} else {

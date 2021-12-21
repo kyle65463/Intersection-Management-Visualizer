@@ -7,6 +7,5 @@ export const vertRoadLength = 190;
 export const roadWidth = 45;
 export const roadBorderWidth = 2;
 
-
 export const carLength = 30;
 export const carWidth = 18;

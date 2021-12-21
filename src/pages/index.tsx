@@ -51,30 +51,30 @@ function Home() {
 						className='btn btn-accent'
 						disabled={isStart}
 						onClick={() => {
-							// for (const car of cars) {
-							// 	if (!car.viewInfo.isEnd) {
-							// 		goStraight(car, intersection);
-							// 	}
-							// }
-							// console.log(cars);
-							// setCars([...cars]);
-							const interval = setInterval(() => {
-								for (const car of cars) {
-									if (!car.viewInfo.isEnd) {
-										const p = Math.random();
-										if (p > 0.5) {
-											goStraight(car, intersection);
-										} else if (p > 0.25) {
-											goRight(car, intersection);
-										} else {
-											goLeft(car, intersection);
-										}
-									}
+							for (const car of cars) {
+								if (!car.viewInfo.isEnd) {
+									goStraight(car, intersection);
+									console.log(car.curZone);
 								}
-								setCars([...cars]);
-							}, 200);
-							setIsStart(true);
-							setInt(interval);
+							}
+							setCars([...cars]);
+							// const interval = setInterval(() => {
+							// 	for (const car of cars) {
+							// 		if (!car.viewInfo.isEnd) {
+							// 			const p = Math.random();
+							// 			if (p > 0.5) {
+							// 				goStraight(car, intersection);
+							// 			} else if (p > 0.25) {
+							// 				goRight(car, intersection);
+							// 			} else {
+							// 				goLeft(car, intersection);
+							// 			}
+							// 		}
+							// 	}
+							// 	setCars([...cars]);
+							// }, 600);
+							// setIsStart(true);
+							// setInt(interval);
 						}}
 					>
 						straight

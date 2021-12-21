@@ -30,6 +30,9 @@ const initialIntersection = (numCol: number, numRow: number): Intersection => {
 			intersection.zones.push(new ConflictZone(i, j));
 		}
 	}
+	for (const dir of dirs) {
+		Road.numAllRoads[dir] = numCol;
+	}
 	return intersection;
 };
 
