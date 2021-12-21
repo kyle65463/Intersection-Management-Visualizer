@@ -7,16 +7,12 @@ import ConflictZoneView from "../components/ConflictZoneView";
 import RoadsView from "../components/RoadsView";
 import useCars from "../hooks/useCars";
 import { goLeft, goRight, goStraight } from "../models/car";
-import { ConflictZone } from "../models/confict_zone";
 
 function Home() {
 	const [int, setInt] = useState<NodeJS.Timer | undefined>(undefined);
 	const [isStart, setIsStart] = useState(false);
 	const { cars, demoCar, moveCar, addRoad, roadCollections, zones } = useCars();
-	console.log("c");
-	console.log(ConflictZone.numCols);
-	console.log(ConflictZone.numRows);
-	console.log(zones.length);
+
 	return (
 		<DndProvider backend={HTML5Backend}>
 			<Head>
@@ -42,7 +38,7 @@ function Home() {
 						onClick={() => {
 							const interval = setInterval(() => {
 								for (const car of cars) {
-									if (!car.ended) {
+									if (!car.viewInfo.isEnd) {
 										const p = Math.random();
 										if (p > 0.5) {
 											goStraight(car);

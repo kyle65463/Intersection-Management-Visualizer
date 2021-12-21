@@ -1,5 +1,8 @@
-export class ConflictZone {
+export abstract class Zone {}
+
+export class ConflictZone extends Zone {
 	constructor(x: number, y: number) {
+		super();
 		this.col = x;
 		this.row = y;
 	}

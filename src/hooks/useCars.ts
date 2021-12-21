@@ -1,9 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 import { Car } from "../models/car";
 import { ConflictZone } from "../models/confict_zone";
-import { Direction, Road } from "../models/road";
-
-const dirs: Direction[] = ["left", "right", "top", "bot"];
+import { Road } from "../models/road";
+import { Direction, dirs } from "../utils/dir_utils";
 
 interface RoadCollection {
 	dir: Direction;
@@ -55,23 +54,14 @@ function useCars() {
 		});
 
 		// Update zones
-		console.log("b");
-		console.log(zonesSize.numCol);
-		console.log(zonesSize.numRow);
 		ConflictZone.numCols = zonesSize.numCol;
 		ConflictZone.numRows = zonesSize.numRow;
-		console.log("a");
-		console.log(ConflictZone.numCols);
-		console.log(ConflictZone.numRows);
 		zones.splice(0, zones.length);
 		for (let i = 0; i < zonesSize.numCol; i++) {
 			for (let j = 0; j < zonesSize.numRow; j++) {
 				zones.push(new ConflictZone(i, j));
 			}
 		}
-		console.log("d");
-		console.log(ConflictZone.numCols);
-		console.log(ConflictZone.numRows);
 	}, []);
 
 	const addRoad = useCallback((road: Road) => {

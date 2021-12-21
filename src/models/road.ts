@@ -1,24 +1,10 @@
+import { Direction } from "../utils/dir_utils";
 import { Car } from "./car";
+import { Zone } from "./confict_zone";
 
-export type Direction = "left" | "right" | "top" | "bot";
-
-export const dirRoation = {
-	left: 0,
-	right: 180,
-	top: -90,
-	bot: 90,
-};
-
-export function oppositeDir(dir: Direction): Direction {
-	if (dir === "right") return "left";
-	if (dir === "left") return "right";
-	if (dir === "top") return "bot";
-	if (dir === "bot") return "top";
-	return "left";
-}
-
-export class Road {
+export class Road extends Zone {
 	constructor(id: number, dir: Direction) {
+		super();
 		this.id = id;
 		this.dir = dir;
 	}
@@ -33,8 +19,8 @@ export class Road {
 
 	public removeCar = (car: Car) => {
 		this.cars = this.cars.filter((e) => e.id != car.id);
-		for(const c of this.cars) {
-			if(c.idOnRoad && car.idOnRoad && c.idOnRoad > car.idOnRoad) {
+		for (const c of this.cars) {
+			if (c.idOnRoad && car.idOnRoad && c.idOnRoad > car.idOnRoad) {
 				c.idOnRoad--;
 			}
 		}

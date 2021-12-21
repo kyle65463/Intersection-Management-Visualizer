@@ -1,7 +1,8 @@
+import { Direction, dirRoation, relativeDir } from "../utils/dir_utils";
 import { ConflictZone } from "./confict_zone";
-import { Direction, dirRoation, oppositeDir, Road } from "./road";
+import { Road } from "./road";
 
-function checkForward(car: Car): Road | ConflictZone | undefined {
+export function checkForward(car: Car): Road | ConflictZone | undefined {
 	const { road, zone, dir } = car;
 	if (zone) {
 		if (dir === "right") {
@@ -61,7 +62,7 @@ export const goStraight = (car: Car) => {
 		if (target instanceof Road) {
 			car.road = target;
 			car.zone = undefined;
-			car.ended = true;
+			car.viewInfo.isEnd = true;
 		}
 		if (target instanceof ConflictZone) {
 			car.zone = target;
@@ -171,6 +172,12 @@ export function colorToStyle(color: Color) {
 	}
 }
 
+interface ViewInfo {
+	turning: Turning;
+	dir: Direction;
+	isEnd: boolean;
+}
+
 export class Car {
 	constructor(id: number, color?: Color) {
 		this.id = id;
@@ -179,7 +186,7 @@ export class Car {
 
 	public setInitialRoad = (road: Road) => {
 		this.rotation = dirRoation[road.dir];
-		this.dir = oppositeDir(road.dir);
+		this.dir = relativeDir(road.dir, "opposite");
 		this.road = road;
 		this.idOnRoad = road.numCars;
 	};
@@ -203,6 +210,6 @@ export class Car {
 	public zone?: ConflictZone;
 	public started = false;
 	public turning: Turning = "none";
-	public ended = false;
 	public color: Color = "blue";
+	public viewInfo: ViewInfo = { dir: "right", turning: "none", isEnd: false };
 }
