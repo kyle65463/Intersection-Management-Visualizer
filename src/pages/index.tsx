@@ -20,15 +20,15 @@ function Home() {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main className='container relative min-h-screen py-5 mx-auto'>
-				<CarView key={demoCar.id} car={demoCar} demo canDrag={!isStart} />
+				<CarView key={demoCar.id} car={demoCar} demo canDrag={!isStart} intersection={intersection} />
 				{cars.map((car) => (
-					<CarView key={car.id} car={car} canDrag={!isStart} />
+					<CarView key={car.id} car={car} canDrag={!isStart} intersection={intersection} />
 				))}
 				{roadCollections.map((roads, i) => (
-					<RoadsView key={i} {...roads} addRoad={addRoad} moveCar={moveCar} />
+					<RoadsView key={i} {...roads} addRoad={addRoad} moveCar={moveCar} intersection={intersection} />
 				))}
 				{zones.map((zone, i) => (
-					<ConflictZoneView key={i} zone={zone} />
+					<ConflictZoneView key={i} zone={zone} intersection={intersection} />
 				))}
 
 				<div style={{ bottom: "100px", right: "270px" }} className='absolute flex flex-col justify-end'>

@@ -1,10 +1,8 @@
 import { Direction } from "../utils/dir_utils";
 import { Car } from "./car";
-import { Zone } from "./confict_zone";
 
-export class Road extends Zone {
+export class Road {
 	constructor(id: number, dir: Direction) {
-		super();
 		this.id = id;
 		this.dir = dir;
 	}

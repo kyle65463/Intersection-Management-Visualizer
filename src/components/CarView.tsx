@@ -1,5 +1,6 @@
 import React from "react";
 import { useDrag } from "react-dnd";
+import { Intersection } from "../hooks/useCars";
 import { Car, colorToStyle } from "../models/car";
 import { carLength, carWidth, ItemTypes } from "../utils/constants";
 import { getCarPos, getDemoCarPos } from "../utils/position_utils";
@@ -8,9 +9,10 @@ interface CarViewProps {
 	car: Car;
 	demo?: boolean;
 	canDrag: boolean;
+	intersection: Intersection;
 }
 
-function CarView({ car, demo, canDrag }: CarViewProps) {
+function CarView({ car, demo, canDrag, intersection }: CarViewProps) {
 	const [{ opacity }, dragRef] = useDrag(
 		() => ({
 			type: ItemTypes.CAR,
@@ -25,7 +27,7 @@ function CarView({ car, demo, canDrag }: CarViewProps) {
 	return (
 		<div
 			style={{
-				...(demo ? getDemoCarPos() : getCarPos(car)),
+				...(demo ? getDemoCarPos(intersection) : getCarPos(car, intersection)),
 				width: `${demo ? carLength * 1.7 : carLength}px`,
 				height: `${demo ? carWidth * 1.7 : carWidth}px`,
 			}}

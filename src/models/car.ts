@@ -11,7 +11,6 @@ export const goStraight = (car: Car, intersection: Intersection) => {
 		return;
 	}
 	const target = getZoneFrontOfCar(car, intersection);
-	console.log(target);
 	if (!target) return; // Action not valid
 	if (target instanceof Road) {
 		car.viewInfo.isEnd = true;
@@ -38,9 +37,11 @@ export const goLeft = (car: Car, intersection: Intersection) => {
 	if (car.turning === "clockwise") car.rotation += 45;
 	if (car.turning === "anti-clockwise") car.rotation -= 45;
 
-	car.dir = relativeDir(car.dir, "anti-clockwise");
-	car.rotation -= 45;
-	car.turning = "anti-clockwise";
+	if (!car.viewInfo.isEnd) {
+		car.dir = relativeDir(car.dir, "anti-clockwise");
+		car.rotation -= 45;
+		car.turning = "anti-clockwise";
+	}
 };
 
 export const goRight = (car: Car, intersection: Intersection) => {
@@ -58,9 +59,11 @@ export const goRight = (car: Car, intersection: Intersection) => {
 	if (car.turning === "clockwise") car.rotation += 45;
 	if (car.turning === "anti-clockwise") car.rotation -= 45;
 
-	car.dir = relativeDir(car.dir, "clockwise");
-	car.rotation += 45;
-	car.turning = "clockwise";
+	if (!car.viewInfo.isEnd) {
+		car.dir = relativeDir(car.dir, "clockwise");
+		car.rotation += 45;
+		car.turning = "clockwise";
+	}
 };
 
 type Turning = "clockwise" | "anti-clockwise" | "none";

@@ -25,8 +25,6 @@ const initialIntersection = (numCol: number, numRow: number): Intersection => {
 		zones: [],
 		zonesSize: { numCol, numRow },
 	};
-	ConflictZone.numCols = numCol;
-	ConflictZone.numRows = numRow;
 	for (let i = 0; i < numCol; i++) {
 		for (let j = 0; j < numRow; j++) {
 			intersection.zones.push(new ConflictZone(i, j));
@@ -54,8 +52,6 @@ function useCars() {
 		});
 
 		// Update zones
-		ConflictZone.numCols = zonesSize.numCol;
-		ConflictZone.numRows = zonesSize.numRow;
 		zones.splice(0, zones.length);
 		for (let i = 0; i < zonesSize.numCol; i++) {
 			for (let j = 0; j < zonesSize.numRow; j++) {

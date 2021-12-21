@@ -4,10 +4,10 @@ import { ConflictZone } from "../models/confict_zone";
 import { Road } from "../models/road";
 import { Direction } from "./dir_utils";
 
-const rightRoadOffset = () => ~~((ConflictZone.numRows - Road.numAllRoads.right) / 2);
-const leftRoadOffset = () => ~~((ConflictZone.numRows - Road.numAllRoads.left) / 2);
-const topRoadOffset = () => ~~((ConflictZone.numCols - Road.numAllRoads.top) / 2);
-const botRoadOffset = () => ~~((ConflictZone.numCols - Road.numAllRoads.bot) / 2);
+const rightRoadOffset = ({ zonesSize: { numRow } }: Intersection) => ~~((numRow - Road.numAllRoads.right) / 2);
+const leftRoadOffset = ({ zonesSize: { numRow } }: Intersection) => ~~((numRow - Road.numAllRoads.left) / 2);
+const topRoadOffset = ({ zonesSize: { numCol } }: Intersection) => ~~((numCol - Road.numAllRoads.top) / 2);
+const botRoadOffset = ({ zonesSize: { numCol } }: Intersection) => ~~((numCol - Road.numAllRoads.bot) / 2);
 
 const getRoad = (roadId: number, dir: Direction, { roadCollections }: Intersection) => {
 	const col = roadCollections.find((col) => col.dir == dir);
@@ -19,6 +19,9 @@ const getConflictZone = (col: number, row: number, { zones }: Intersection) => {
 };
 
 export function getZoneFrontOfCar(car: Car, intersection: Intersection): Road | ConflictZone | undefined {
+	const {
+		zonesSize: { numCol, numRow },
+	} = intersection;
 	const { curZone, dir } = car;
 	if (curZone instanceof ConflictZone) {
 		let zoneCol: number = curZone.col;
@@ -26,29 +29,29 @@ export function getZoneFrontOfCar(car: Car, intersection: Intersection): Road | 
 		let roadId: number | undefined = undefined;
 		let roadDir: Direction | undefined = undefined;
 		if (dir === "right") {
-			if (curZone.col == ConflictZone.numCols - 1) {
-				roadId = curZone.row - rightRoadOffset();
+			if (curZone.col == numCol - 1) {
+				roadId = curZone.row - rightRoadOffset(intersection);
 				roadDir = "right";
 			} else {
 				zoneCol++;
 			}
 		} else if (dir === "left") {
 			if (curZone.col == 0) {
-				roadId = curZone.row - leftRoadOffset();
+				roadId = curZone.row - leftRoadOffset(intersection);
 				roadDir = "left";
 			} else {
 				zoneCol--;
 			}
 		} else if (dir === "top") {
 			if (curZone.row == 0) {
-				roadId = curZone.col - topRoadOffset();
+				roadId = curZone.col - topRoadOffset(intersection);
 				roadDir = "top";
 			} else {
 				zoneRow--;
 			}
 		} else {
-			if (curZone.row == ConflictZone.numRows - 1) {
-				roadId = curZone.col - botRoadOffset();
+			if (curZone.row == numRow - 1) {
+				roadId = curZone.col - botRoadOffset(intersection);
 				roadDir = "bot";
 			} else {
 				zoneRow++;
@@ -63,17 +66,17 @@ export function getZoneFrontOfCar(car: Car, intersection: Intersection): Road | 
 		let zoneCol: number | undefined = undefined;
 		let zoneRow: number | undefined = undefined;
 		if (road.dir === "right") {
-			zoneCol = ConflictZone.numCols - 1;
-			zoneRow = rightRoadOffset() + road.id;
+			zoneCol = numCol - 1;
+			zoneRow = rightRoadOffset(intersection) + road.id;
 		} else if (road.dir === "left") {
 			zoneCol = 0;
-			zoneRow = leftRoadOffset() + road.id;
+			zoneRow = leftRoadOffset(intersection) + road.id;
 		} else if (road.dir === "top") {
-			zoneCol = topRoadOffset() + road.id;
+			zoneCol = topRoadOffset(intersection) + road.id;
 			zoneRow = 0;
 		} else {
-			zoneCol = botRoadOffset() + road.id;
-			zoneRow = ConflictZone.numRows - 1;
+			zoneCol = botRoadOffset(intersection) + road.id;
+			zoneRow = numRow - 1;
 		}
 		return getConflictZone(zoneCol, zoneRow, intersection);
 	}
