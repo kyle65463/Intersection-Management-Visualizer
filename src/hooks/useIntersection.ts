@@ -30,13 +30,10 @@ const initialIntersection = (numCol: number, numRow: number): Intersection => {
 			intersection.zones.push(new ConflictZone(i, j));
 		}
 	}
-	for (const dir of dirs) {
-		Road.numAllRoads[dir] = numCol;
-	}
 	return intersection;
 };
 
-function useCars() {
+function useIntersection() {
 	const [intersection, setIntersection] = useState<Intersection>(initialIntersection(2, 2));
 	const nextCarId = useRef(2);
 
@@ -70,7 +67,6 @@ function useCars() {
 			if (!roadCollections[roadsId].roads.find((e) => e.id == road.id)) {
 				roadCollections[roadsId].roads.push(road);
 			}
-			Road.numAllRoads[road.dir] = roadCollections[roadsId].roads.length;
 			updateZones(intersection);
 			return { ...intersection };
 		});
@@ -126,4 +122,4 @@ function useCars() {
 	};
 }
 
-export default useCars;
+export default useIntersection;

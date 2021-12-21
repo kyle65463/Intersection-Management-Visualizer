@@ -1,70 +1,6 @@
-import { Intersection } from "../hooks/useCars";
 import { Direction, dirRoation, relativeDir } from "../utils/dir_utils";
-import { getZoneFrontOfCar } from "../utils/zone_utils";
 import { ConflictZone } from "./confict_zone";
 import { Road } from "./road";
-
-export const goStraight = (car: Car, intersection: Intersection) => {
-	car.started = true;
-	if (car.curZone instanceof Road && car.idOnRoad > 1) {
-		car.idOnRoad--;
-		return;
-	}
-	const target = getZoneFrontOfCar(car, intersection);
-	if (!target) return; // Action not valid
-	if (target instanceof Road) {
-		car.viewInfo.isEnd = true;
-	}
-	car.curZone = target;
-	if (car.turning === "clockwise") car.rotation += 45;
-	if (car.turning === "anti-clockwise") car.rotation -= 45;
-
-	car.turning = "none";
-};
-
-export const goLeft = (car: Car, intersection: Intersection) => {
-	car.started = true;
-	if (car.curZone instanceof Road && car.idOnRoad > 1) {
-		car.idOnRoad--;
-		return;
-	}
-	const target = getZoneFrontOfCar(car, intersection);
-	if (!target) return; // Action not valid
-	if (target instanceof Road) {
-		car.viewInfo.isEnd = true;
-	}
-	car.curZone = target;
-	if (car.turning === "clockwise") car.rotation += 45;
-	if (car.turning === "anti-clockwise") car.rotation -= 45;
-
-	if (!car.viewInfo.isEnd) {
-		car.dir = relativeDir(car.dir, "anti-clockwise");
-		car.rotation -= 45;
-		car.turning = "anti-clockwise";
-	}
-};
-
-export const goRight = (car: Car, intersection: Intersection) => {
-	car.started = true;
-	if (car.curZone instanceof Road && car.idOnRoad > 1) {
-		car.idOnRoad--;
-		return;
-	}
-	const target = getZoneFrontOfCar(car, intersection);
-	if (!target) return; // Action not valid
-	if (target instanceof Road) {
-		car.viewInfo.isEnd = true;
-	}
-	car.curZone = target;
-	if (car.turning === "clockwise") car.rotation += 45;
-	if (car.turning === "anti-clockwise") car.rotation -= 45;
-
-	if (!car.viewInfo.isEnd) {
-		car.dir = relativeDir(car.dir, "clockwise");
-		car.rotation += 45;
-		car.turning = "clockwise";
-	}
-};
 
 type Turning = "clockwise" | "anti-clockwise" | "none";
 type Color = "blue" | "red" | "green" | "yellow" | "amber" | "indigo" | "sky";
@@ -86,12 +22,6 @@ export function colorToStyle(color: Color) {
 		case "sky":
 			return "bg-sky-400";
 	}
-}
-
-interface ViewInfo {
-	turning: Turning;
-	dir: Direction;
-	isEnd: boolean;
 }
 
 export class Car {
@@ -130,5 +60,5 @@ export class Car {
 	public started = false;
 	public turning: Turning = "none";
 	public color: Color = "blue";
-	public viewInfo: ViewInfo = { dir: "right", turning: "none", isEnd: false };
+	public isEnd: boolean = false;
 }

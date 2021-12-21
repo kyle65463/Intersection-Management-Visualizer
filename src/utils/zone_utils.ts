@@ -1,13 +1,17 @@
-import { Intersection } from "../hooks/useCars";
+import { Intersection } from "../hooks/useIntersection";
 import { Car } from "../models/car";
 import { ConflictZone } from "../models/confict_zone";
 import { Road } from "../models/road";
 import { Direction } from "./dir_utils";
 
-const rightRoadOffset = ({ zonesSize: { numRow } }: Intersection) => ~~((numRow - Road.numAllRoads.right) / 2);
-const leftRoadOffset = ({ zonesSize: { numRow } }: Intersection) => ~~((numRow - Road.numAllRoads.left) / 2);
-const topRoadOffset = ({ zonesSize: { numCol } }: Intersection) => ~~((numCol - Road.numAllRoads.top) / 2);
-const botRoadOffset = ({ zonesSize: { numCol } }: Intersection) => ~~((numCol - Road.numAllRoads.bot) / 2);
+const rightRoadOffset = ({ zonesSize: { numRow }, roadCollections }: Intersection) =>
+	~~((numRow - (roadCollections.find((col) => col.dir == "right")?.roads.length ?? 0)) / 2);
+const leftRoadOffset = ({ zonesSize: { numRow }, roadCollections }: Intersection) =>
+	~~((numRow - (roadCollections.find((col) => col.dir == "left")?.roads.length ?? 0)) / 2);
+const topRoadOffset = ({ zonesSize: { numCol }, roadCollections }: Intersection) =>
+	~~((numCol - (roadCollections.find((col) => col.dir == "top")?.roads.length ?? 0)) / 2);
+const botRoadOffset = ({ zonesSize: { numCol }, roadCollections }: Intersection) =>
+	~~((numCol - (roadCollections.find((col) => col.dir == "bot")?.roads.length ?? 0)) / 2);
 
 const getRoad = (roadId: number, dir: Direction, { roadCollections }: Intersection) => {
 	const col = roadCollections.find((col) => col.dir == dir);

@@ -1,5 +1,5 @@
 import React from "react";
-import { Intersection } from "../hooks/useCars";
+import { Intersection } from "../hooks/useIntersection";
 import { Road } from "../models/road";
 import { Direction } from "../utils/dir_utils";
 import { getRoadBtnPos } from "../utils/position_utils";

@@ -5,13 +5,13 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import CarView from "../components/CarView";
 import ConflictZoneView from "../components/ConflictZoneView";
 import RoadsView from "../components/RoadsView";
-import useCars from "../hooks/useCars";
-import { goLeft, goRight, goStraight } from "../models/car";
+import useIntersection from "../hooks/useIntersection";
+import Move, { MoveLeft, MoveRight } from "../models/move";
 
 function Home() {
 	const [int, setInt] = useState<NodeJS.Timer | undefined>(undefined);
 	const [isStart, setIsStart] = useState(false);
-	const { intersection, cars, demoCar, moveCar, addRoad, roadCollections, zones, setCars } = useCars();
+	const { intersection, cars, demoCar, moveCar, addRoad, roadCollections, zones, setCars } = useIntersection();
 
 	return (
 		<DndProvider backend={HTML5Backend}>
@@ -36,8 +36,8 @@ function Home() {
 						className='btn'
 						onClick={() => {
 							for (const car of cars) {
-								if (!car.viewInfo.isEnd) {
-									goLeft(car, intersection);
+								if (!car.isEnd) {
+									new MoveLeft().perform(car, intersection);
 								}
 							}
 							setCars([...cars]);
@@ -51,30 +51,24 @@ function Home() {
 						className='btn btn-accent'
 						disabled={isStart}
 						onClick={() => {
-							for (const car of cars) {
-								if (!car.viewInfo.isEnd) {
-									goStraight(car, intersection);
-									console.log(car.curZone);
-								}
-							}
-							setCars([...cars]);
-							// const interval = setInterval(() => {
-							// 	for (const car of cars) {
-							// 		if (!car.viewInfo.isEnd) {
-							// 			const p = Math.random();
-							// 			if (p > 0.5) {
-							// 				goStraight(car, intersection);
-							// 			} else if (p > 0.25) {
-							// 				goRight(car, intersection);
-							// 			} else {
-							// 				goLeft(car, intersection);
-							// 			}
-							// 		}
+							// for (const car of cars) {
+							// 	if (!car.isEnd) {
+							// 		new MoveForward().perform(car, intersection);
+							// 		console.log(car.curZone);
 							// 	}
-							// 	setCars([...cars]);
-							// }, 600);
-							// setIsStart(true);
-							// setInt(interval);
+							// }
+							// setCars([...cars]);
+							const interval = setInterval(() => {
+								for (const car of cars) {
+									if (!car.isEnd) {
+										const move = Move.generateRandomMove();
+										move.perform(car, intersection);
+									}
+								}
+								setCars([...cars]);
+							}, 200);
+							setIsStart(true);
+							setInt(interval);
 						}}
 					>
 						straight
@@ -85,8 +79,8 @@ function Home() {
 						className='btn'
 						onClick={() => {
 							for (const car of cars) {
-								if (!car.viewInfo.isEnd) {
-									goRight(car, intersection);
+								if (!car.isEnd) {
+									new MoveRight().perform(car, intersection);
 								}
 							}
 							setCars([...cars]);

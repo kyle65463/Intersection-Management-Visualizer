@@ -1,6 +1,6 @@
 import React from "react";
 import { useDrop } from "react-dnd";
-import { Intersection } from "../hooks/useCars";
+import { Intersection } from "../hooks/useIntersection";
 import { Road } from "../models/road";
 import { ItemTypes, roadWidth } from "../utils/constants";
 import { getRoadPos } from "../utils/position_utils";

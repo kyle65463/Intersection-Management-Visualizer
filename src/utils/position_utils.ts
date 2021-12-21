@@ -1,12 +1,14 @@
-import { Intersection } from "../hooks/useCars";
+import { Intersection } from "../hooks/useIntersection";
 import { Car } from "../models/car";
 import { Road } from "../models/road";
 import { carLength, carWidth, horizRoadLength, roadBorderWidth, roadWidth, vertRoadLength } from "./constants";
 
-export function getRoadPos({ dir, numRoads, id: roadId }: Road, intersection: Intersection) {
+export function getRoadPos({ dir, id: roadId }: Road, intersection: Intersection) {
 	const {
 		zonesSize: { numCol, numRow },
+		roadCollections,
 	} = intersection;
+	const numRoads = roadCollections.find((col) => col.dir == dir)?.roads.length ?? 0;
 	let style = {};
 	if (dir === "top" || dir === "bot") {
 		const startIndex = ~~((numCol - numRoads) / 2);
@@ -78,11 +80,12 @@ export function getZonePos(
 export function getCarPos({ curZone: zone, rotation, turning, dir, idOnRoad }: Car, intersection: Intersection) {
 	const {
 		zonesSize: { numCol, numRow },
+		roadCollections,
 	} = intersection;
 	let style = {};
 	if (zone instanceof Road) {
 		const road = zone;
-		const numRoads = road?.numRoads;
+		const numRoads = roadCollections.find((col) => col.dir == road.dir)?.roads.length ?? 0;
 		if (road.dir === "left") {
 			const startIndex = ~~((numRow - numRoads) / 2);
 			style = { ...style, transform: `rotate(${rotation}deg)` };
@@ -229,7 +232,8 @@ export function getRoadBtnPos(roads: Road[], intersection: Intersection) {
 	const {
 		zonesSize: { numCol, numRow },
 	} = intersection;
-	const { dir, numRoads, id: roadId } = roads[roads.length - 1];
+	const { dir, id: roadId } = roads[roads.length - 1];
+	const numRoads = roads.length;
 	let style = {};
 	if (dir === "top" || dir === "bot") {
 		const startIndex = ~~((numCol - numRoads) / 2) + 1;

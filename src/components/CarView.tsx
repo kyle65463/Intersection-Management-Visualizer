@@ -1,6 +1,6 @@
 import React from "react";
 import { useDrag } from "react-dnd";
-import { Intersection } from "../hooks/useCars";
+import { Intersection } from "../hooks/useIntersection";
 import { Car, colorToStyle } from "../models/car";
 import { carLength, carWidth, ItemTypes } from "../utils/constants";
 import { getCarPos, getDemoCarPos } from "../utils/position_utils";

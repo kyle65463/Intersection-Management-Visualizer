@@ -1,5 +1,5 @@
 import React from "react";
-import { Intersection } from "../hooks/useCars";
+import { Intersection } from "../hooks/useIntersection";
 import { ConflictZone } from "../models/confict_zone";
 import { getZonePos } from "../utils/position_utils";
 

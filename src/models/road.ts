@@ -24,17 +24,6 @@ export class Road {
 		}
 	};
 
-	static numAllRoads = {
-		left: 1,
-		right: 1,
-		top: 1,
-		bot: 1,
-	};
-
-	get numRoads() {
-		return Road.numAllRoads[this.dir];
-	}
-
 	get numCars() {
 		return this.cars.length;
 	}
