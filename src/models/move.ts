@@ -11,10 +11,14 @@ export default abstract class Move {
 			car.idOnRoad--;
 			return;
 		}
+		if (car.curZone instanceof Road) {
+			car.curZone.removeCar(car, false);
+		}
 		const target = getZoneFrontOfCar(car, intersection);
 		if (!target) return; // Action not valid
 		if (target instanceof Road) {
 			car.isEnd = true;
+			target.addCar(car, true);
 		}
 		car.curZone = target;
 		if (car.turning === "clockwise") car.rotation += 45;

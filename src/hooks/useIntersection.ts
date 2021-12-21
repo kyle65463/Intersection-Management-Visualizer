@@ -113,6 +113,8 @@ function useIntersection() {
 		});
 	}, []);
 
+	const reset = useCallback(() => {}, []);
+
 	return {
 		intersection,
 		moveCar,

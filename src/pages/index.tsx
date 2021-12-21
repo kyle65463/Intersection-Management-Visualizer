@@ -6,7 +6,7 @@ import CarView from "../components/CarView";
 import ConflictZoneView from "../components/ConflictZoneView";
 import RoadsView from "../components/RoadsView";
 import useIntersection from "../hooks/useIntersection";
-import Move, { MoveLeft, MoveRight } from "../models/move";
+import Move, { MoveRight } from "../models/move";
 
 function Home() {
 	const [int, setInt] = useState<NodeJS.Timer | undefined>(undefined);
@@ -31,33 +31,11 @@ function Home() {
 					<ConflictZoneView key={i} zone={zone} intersection={intersection} />
 				))}
 
-				<div style={{ bottom: "100px", right: "270px" }} className='absolute flex flex-col justify-end'>
-					<button
-						className='btn'
-						onClick={() => {
-							for (const car of cars) {
-								if (!car.isEnd) {
-									new MoveLeft().perform(car, intersection);
-								}
-							}
-							setCars([...cars]);
-						}}
-					>
-						left
-					</button>
-				</div>
 				<div style={{ bottom: "100px", right: "150px" }} className='absolute flex flex-col justify-end'>
 					<button
 						className='btn btn-accent'
 						disabled={isStart}
 						onClick={() => {
-							// for (const car of cars) {
-							// 	if (!car.isEnd) {
-							// 		new MoveForward().perform(car, intersection);
-							// 		console.log(car.curZone);
-							// 	}
-							// }
-							// setCars([...cars]);
 							const interval = setInterval(() => {
 								for (const car of cars) {
 									if (!car.isEnd) {
