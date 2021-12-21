@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import { Car } from "../models/car";
 import { ConflictZone } from "../models/confict_zone";
 import { Road } from "../models/road";
-import { Direction, dirs } from "../utils/dir_utils";
+import { Direction, dirRoation, dirs, relativeDir } from "../utils/dir_utils";
 
 interface RoadCollection {
 	dir: Direction;
@@ -77,7 +77,7 @@ function useIntersection() {
 			const { cars, demoCar } = intersection;
 			const car = new Car(nextCarId.current, demoCar.color);
 			nextCarId.current += 1;
-			road.addCar(car);
+			road.addCar(car, true);
 			car.setInitialRoad(road);
 			cars.push(car);
 
@@ -93,8 +93,8 @@ function useIntersection() {
 				const { cars } = intersection;
 				const car = cars.find((car) => car.id == carId);
 				if (car) {
-					car.initialRoad.removeCar(car);
-					road.addCar(car);
+					car.initialRoad.removeCar(car, true);
+					road.addCar(car, true);
 					car.setInitialRoad(road);
 				}
 				return { ...intersection };
@@ -113,13 +113,35 @@ function useIntersection() {
 		});
 	}, []);
 
-	const reset = useCallback(() => {}, []);
+	const reset = useCallback(() => {
+		setIntersection((intersection) => {
+			const { roadCollections, cars } = intersection;
+			for (const col of roadCollections) {
+				console.log(col);
+				for (const road of col.roads) {
+					console.log(road);
+					road.cars = [...road.initialCars];
+				}
+			}
+			for (const car of cars) {
+				car.isEnd = false;
+				car.started = false;
+				car.curZone = car.initialRoad;
+				car.rotation = dirRoation[car.initialRoad.dir];
+				car.dir = relativeDir(car.initialRoad.dir, "opposite");
+				car.idOnRoad = car.initialIdOnRoad;
+			}
+			intersection.cars = cars;
+			return { ...intersection };
+		});
+	}, []);
 
 	return {
 		intersection,
 		moveCar,
 		addRoad,
 		setCars,
+		reset,
 		...intersection,
 	};
 }

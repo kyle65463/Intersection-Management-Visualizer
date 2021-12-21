@@ -9,11 +9,13 @@ export class Road {
 
 	public id: number;
 	public dir: Direction;
+	public initialCars: Car[] = [];
 	public cars: Car[] = [];
 
-	public addCar = (car: Car, rev: boolean = false) => {
-		if (!rev) {
+	public addCar = (car: Car, initial: boolean = false) => {
+		if (initial) {
 			this.cars.push(car);
+			this.initialCars.push(car);
 		} else {
 			for (const car of this.cars) {
 				car.idOnRoad++;
@@ -22,14 +24,15 @@ export class Road {
 		}
 	};
 
-	public removeCar = (car: Car, isShift: boolean = true) => {
+	public removeCar = (car: Car, initial: boolean = false) => {
 		this.cars = this.cars.filter((e) => e.id != car.id);
-		if (isShift) {
+		if (initial) {
 			for (const c of this.cars) {
 				if (c.idOnRoad && car.idOnRoad && c.idOnRoad > car.idOnRoad) {
 					c.idOnRoad--;
 				}
 			}
+			this.initialCars = this.initialCars.filter((e) => e.id != car.id);
 		}
 	};
 

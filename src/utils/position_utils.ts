@@ -139,19 +139,19 @@ export function getCarPos({ curZone: zone, rotation, turning, dir, idOnRoad }: C
 					}).left,
 				};
 			} else {
-				style = { ...style, transform: `rotate(${rotation}deg)`, transformOrigin: "left top" };
+				style = { ...style, transform: `rotate(${rotation}deg)` };
 				style = {
 					...style,
 					top: `${
 						getZonePos(road.id, 0, intersection, {
-							top: `-${roadWidth * (idOnRoad - 1)}px - ${(roadWidth - carLength) / 2}px`,
+							top: `-${roadWidth * (idOnRoad - 1)}px - ${carLength}px`,
 						}).top
 					}`,
 				};
 				style = {
 					...style,
 					left: getZonePos(road.id + startIndex, 0, intersection, {
-						left: `${roadBorderWidth / 2}px + ${(roadWidth - carWidth) / 2}px`,
+						left: `${roadBorderWidth / 2}px + ${(0.83 * carWidth) / 2}px`,
 					}).left,
 				};
 			}

@@ -6,12 +6,12 @@ import CarView from "../components/CarView";
 import ConflictZoneView from "../components/ConflictZoneView";
 import RoadsView from "../components/RoadsView";
 import useIntersection from "../hooks/useIntersection";
-import Move, { MoveRight } from "../models/move";
+import Move from "../models/move";
 
 function Home() {
 	const [int, setInt] = useState<NodeJS.Timer | undefined>(undefined);
 	const [isStart, setIsStart] = useState(false);
-	const { intersection, cars, demoCar, moveCar, addRoad, roadCollections, zones, setCars } = useIntersection();
+	const { intersection, cars, demoCar, moveCar, addRoad, roadCollections, zones, setCars, reset } = useIntersection();
 
 	return (
 		<DndProvider backend={HTML5Backend}>
@@ -37,9 +37,9 @@ function Home() {
 						disabled={isStart}
 						onClick={() => {
 							const interval = setInterval(() => {
+								const move = Move.generateRandomMove();
 								for (const car of cars) {
 									if (!car.isEnd) {
-										const move = Move.generateRandomMove();
 										move.perform(car, intersection);
 									}
 								}
@@ -49,22 +49,20 @@ function Home() {
 							setInt(interval);
 						}}
 					>
-						straight
+						Start
 					</button>
 				</div>
 				<div style={{ bottom: "100px", right: "60px" }} className='absolute flex flex-col justify-end'>
 					<button
 						className='btn'
+						disabled={!isStart}
 						onClick={() => {
-							for (const car of cars) {
-								if (!car.isEnd) {
-									new MoveRight().perform(car, intersection);
-								}
-							}
-							setCars([...cars]);
+							if (int) clearInterval(int);
+							setIsStart(false);
+							reset();
 						}}
 					>
-						right
+						Reset
 					</button>
 				</div>
 			</main>
