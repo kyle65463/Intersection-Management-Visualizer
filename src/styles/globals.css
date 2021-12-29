@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.grayout {
+	box-shadow: 0 0 0 99999px rgba(0, 0, 0, 0.5);
+}

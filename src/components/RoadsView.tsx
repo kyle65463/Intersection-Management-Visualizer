@@ -10,10 +10,11 @@ interface RoadsViewProps {
 	roads: Road[];
 	addRoad: (road: Road) => void;
 	moveCar: (carId: number, road: Road) => void;
+	setCarDest: (road: Road) => void;
 	intersection: Intersection;
 }
 
-function RoadsView({ dir, roads, addRoad, moveCar, intersection }: RoadsViewProps) {
+function RoadsView({ dir, roads, addRoad, moveCar, setCarDest, intersection }: RoadsViewProps) {
 	return (
 		<>
 			{roads.map((road) => (
@@ -21,6 +22,7 @@ function RoadsView({ dir, roads, addRoad, moveCar, intersection }: RoadsViewProp
 					key={road.id}
 					road={road}
 					moveCar={(carId: number) => moveCar(carId, road)}
+					setCarDest={() => setCarDest(road)}
 					intersection={intersection}
 				/>
 			))}

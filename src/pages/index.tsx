@@ -17,6 +17,7 @@ function Home() {
 		demoCar,
 		moveCar,
 		addRoad,
+		setCarDest,
 		roadCollections,
 		zones,
 		setCars,
@@ -31,12 +32,22 @@ function Home() {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main className='container relative min-h-screen py-5 mx-auto'>
+				{intersection.selectingDestCar && (
+					<div className='bg-gray-600 opacity-60 w-screen h-screen z-20 fixed top-0 left-0' />
+				)}
 				<CarView key={demoCar.id} car={demoCar} demo canDrag={!isStart} intersection={intersection} />
 				{cars.map((car) => (
 					<CarView key={car.id} car={car} canDrag={!isStart} intersection={intersection} />
 				))}
 				{roadCollections.map((roads, i) => (
-					<RoadsView key={i} {...roads} addRoad={addRoad} moveCar={moveCar} intersection={intersection} />
+					<RoadsView
+						key={i}
+						{...roads}
+						addRoad={addRoad}
+						moveCar={moveCar}
+						setCarDest={setCarDest}
+						intersection={intersection}
+					/>
 				))}
 				{zones.map((zone, i) => (
 					<ConflictZoneView key={i} zone={zone} intersection={intersection} />

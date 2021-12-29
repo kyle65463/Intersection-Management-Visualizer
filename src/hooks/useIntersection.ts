@@ -16,6 +16,7 @@ export interface Intersection {
 	roadCollections: RoadCollection[];
 	zones: ConflictZone[];
 	zonesSize: { numCol: number; numRow: number };
+	selectingDestCar?: Car;
 }
 
 function getRandomInt(min: number, max: number): number {
@@ -40,6 +41,7 @@ const initialIntersection = (numCol: number, numRow: number): Intersection => {
 		})),
 		zones: [],
 		zonesSize: { numCol, numRow },
+		selectingDestCar: undefined,
 	};
 	for (let i = 0; i < numCol; i++) {
 		for (let j = 0; j < numRow; j++) {
@@ -50,7 +52,7 @@ const initialIntersection = (numCol: number, numRow: number): Intersection => {
 };
 
 function useIntersection() {
-	const [intersection, setIntersection] = useState<Intersection>(initialIntersection(3, 2));
+	const [intersection, setIntersection] = useState<Intersection>(initialIntersection(3, 3));
 	const nextCarId = useRef(2);
 
 	const updateZones = useCallback((intersection: Intersection) => {
@@ -99,7 +101,7 @@ function useIntersection() {
 
 			// Regenerate a color for demo car
 			demoCar.setRandomColor(demoCar.color);
-			return { ...intersection };
+			return { ...intersection, selectingDestCar: car };
 		});
 	}, []);
 
@@ -121,6 +123,15 @@ function useIntersection() {
 			newCar(road);
 		}
 	};
+
+	const setCarDest = useCallback((road: Road) => {
+		setIntersection((intersection) => {
+			const { selectingDestCar } = intersection;
+			if (selectingDestCar) selectingDestCar.destRoad = road;
+			road.isDest = true;
+			return { ...intersection, selectingDestCar: undefined };
+		});
+	}, []);
 
 	const setCars = useCallback((cars: Car[]) => {
 		setIntersection((intersection) => {
@@ -178,6 +189,7 @@ function useIntersection() {
 		moveCar,
 		addRoad,
 		setCars,
+		setCarDest,
 		randomIntersection,
 		reset,
 		...intersection,

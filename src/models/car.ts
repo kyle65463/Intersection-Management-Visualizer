@@ -56,6 +56,7 @@ export class Car {
 	public idOnRoad: number = -1;
 	public initialRoad: Road = new Road(0, "right");
 	public initialIdOnRoad: number = -1;
+	public destRoad?: Road;
 	public curZone: ConflictZone | Road = new Road(0, "right");
 	public started = false;
 	public turning: Turning = "none";

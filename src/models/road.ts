@@ -11,6 +11,7 @@ export class Road {
 	public dir: Direction;
 	public initialCars: Car[] = [];
 	public cars: Car[] = [];
+	public isDest: boolean = false;
 
 	public addCar = (car: Car, initial: boolean = false) => {
 		if (initial) {
