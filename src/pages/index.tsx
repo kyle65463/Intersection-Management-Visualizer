@@ -1,7 +1,6 @@
 import Head from "next/head";
 import { useState } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { useDragLayer } from "react-dnd";
 import CarView from "../components/CarView";
 import ConflictZoneView from "../components/ConflictZoneView";
 import RoadsView from "../components/RoadsView";
@@ -25,14 +24,16 @@ function Home() {
 		randomIntersection,
 	} = useIntersection();
 
+	const isDragging = useDragLayer((monitor) => monitor.isDragging());
+
 	return (
-		<DndProvider backend={HTML5Backend}>
+		<>
 			<Head>
 				<title>Title</title>
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main className='container relative min-h-screen py-5 mx-auto'>
-				{intersection.selectingDestCar && (
+				{(intersection.selectingDestCar || isDragging) && (
 					<div className='bg-gray-600 opacity-60 w-screen h-screen z-20 fixed top-0 left-0' />
 				)}
 				<CarView key={demoCar.id} car={demoCar} demo canDrag={!isStart} intersection={intersection} />
@@ -43,6 +44,7 @@ function Home() {
 					<RoadsView
 						key={i}
 						{...roads}
+						isDragging={isDragging}
 						addRoad={addRoad}
 						moveCar={moveCar}
 						setCarDest={setCarDest}
@@ -93,7 +95,7 @@ function Home() {
 					</button>
 				</div>
 			</main>
-		</DndProvider>
+		</>
 	);
 }
 

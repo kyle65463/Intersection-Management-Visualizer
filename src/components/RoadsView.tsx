@@ -8,19 +8,21 @@ import RoadView from "./RoadView";
 interface RoadsViewProps {
 	dir: Direction;
 	roads: Road[];
+	isDragging: boolean;
 	addRoad: (road: Road) => void;
 	moveCar: (carId: number, road: Road) => void;
 	setCarDest: (road: Road) => void;
 	intersection: Intersection;
 }
 
-function RoadsView({ dir, roads, addRoad, moveCar, setCarDest, intersection }: RoadsViewProps) {
+function RoadsView({ dir, roads, isDragging, addRoad, moveCar, setCarDest, intersection }: RoadsViewProps) {
 	return (
 		<>
 			{roads.map((road) => (
 				<RoadView
 					key={road.id}
 					road={road}
+					isDragging={isDragging}
 					moveCar={(carId: number) => moveCar(carId, road)}
 					setCarDest={() => setCarDest(road)}
 					intersection={intersection}

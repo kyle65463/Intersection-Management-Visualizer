@@ -11,3 +11,4 @@ export const carLength = 30;
 export const carWidth = 18;
 
 export const maxRoadNum = 10;
+export const maxCarPerRow = 4;
