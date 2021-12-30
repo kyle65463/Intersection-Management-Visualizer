@@ -1,6 +1,7 @@
 import { Direction } from "../models/road";
 import * as readline from 'readline';
 import { type } from "os";
+import { cp } from "fs";
 export const a = 'a'
 
 interface carInfo {
@@ -8,7 +9,8 @@ interface carInfo {
     roadDir: Direction,
     roadId: number,
     idOnRoad: number,
-    zones: { col: number, row: number }[]
+    zones: { col: number, row: number }[],
+    outroadDir: Direction
 }
 interface vertex {
     id: number,
@@ -23,7 +25,7 @@ interface vertexWithEdge {
     id: number,
     zone_id: number,
     edges: edge[],
-    roadId: number
+    // roadId: number
 }
 interface type3edge {
     endpoint: vertex[]
@@ -138,18 +140,109 @@ function isDeadLock(vertexs: vertexWithEdge[], edges: edge[]): boolean {
     return isCycle(gv);
 }
 
+function getDir(z1:number,z2:number,z3:number,car:carInfo,row:number,col:number):string{
+    if(z1 == -1){
+        switch(car.roadDir){
+            case 'top':
+                z1 = z2 - col;
+                break;
+            case 'right':
+                z1 = z2 + 1;
+                break;
+            case 'left':
+                z1 = z2 - 1;
+                break;
+            case 'bot':
+                z1 = z2 + col;
+                break;                                 
+        }
+    }
+    if(z3 == -1){
+        switch(car.outroadDir){
+            case 'top':
+                z3 = z2 - col;
+                break;
+            case 'right':
+                z3 = z2 + 1;
+                break;
+            case 'left':
+                z3 = z2 - 1;
+                break;
+            case 'bot':
+                z3 = z2 + col;
+                break;                                 
+        }
+    }
 
-let car: carInfo = { id: 10, roadDir: "left", roadId: 1, idOnRoad: 0, zones: [{ col: 0, row: 0 }, { col: 1, row: 0 }, { col: 2, row: 0 }] };
-let car1: carInfo = { id: 14, roadDir: "left", roadId: 1, idOnRoad: 1, zones: [{ col: 0, row: 0 }, { col: 0, row: 1 }, { col: 0, row: 2 }] };
-let car2: carInfo = { id: 5, roadDir: "right", roadId: 1, idOnRoad: 0, zones: [{ col: 2, row: 0 }, { col: 2, row: 1 }, { col: 2, row: 2 }] };
-let car3: carInfo = { id: 7, roadDir: "right", roadId: 1, idOnRoad: 1, zones: [{ col: 2, row: 0 }, { col: 2, row: 1 }, { col: 1, row: 1 }, { col: 0, row: 1 }] };
-let car4: carInfo = { id: 8, roadDir: "top", roadId: 1, idOnRoad: 0, zones: [{ col: 1, row: 0 }, { col: 1, row: 1 }, { col: 1, row: 2 }] };
-let car5: carInfo = { id: 9, roadDir: "top", roadId: 1, idOnRoad: 1, zones: [{ col: 1, row: 0 }, { col: 2, row: 0 }] };
+    switch(z2 - z1){
+        case 1: // to right
+            switch(z3 - z2){
+                case 1:
+                    return 'foward';
+                case -1:
+                    return 'nonsense';
+                 case col:
+                    return 'right';
+                case -col:
+                    return 'left';                         
+            }
+            break;
+        case -1: // to left
+            switch(z3 - z2){
+                case 1:
+                    return 'nonsense';
+                case -1:
+                    return 'foward';
+                case col:
+                    return 'left';
+                case -col:
+                    return 'right';                         
+            }
+            break;
+        case col: // to bot
+            switch(z3 - z2){
+                case 1:
+                    return 'left';
+                case -1:
+                    return 'right';
+                case col:
+                    return 'foward';
+                case -col:
+                    return 'nonsense';                         
+            }
+            break;
+        case -col: // to top
+            switch(z3 - z2){
+                case 1:
+                    return 'left';
+                case -1:
+                    return 'right';
+                case col:
+                    return 'foward';
+                case -col:
+                    return 'nonsense';                         
+            }
+            break;
+    }
+    return 'a';
+}
 
 
 
 
 let cars: carInfo[] = []; /// input
+let numofcol: number = 3; /// input
+let numofrow: number = 3; /// input
+
+
+
+let car: carInfo = { id: 10, roadDir: "left", roadId: 1, idOnRoad: 0, zones: [{ col: 0, row: 0 }, { col: 1, row: 0 }, { col: 2, row: 0 }],outroadDir:"top" };
+let car1: carInfo = { id: 14, roadDir: "left", roadId: 1, idOnRoad: 1, zones: [{ col: 0, row: 0 }, { col: 0, row: 1 }, { col: 0, row: 2 }],outroadDir:"bot" };
+let car2: carInfo = { id: 5, roadDir: "right", roadId: 1, idOnRoad: 0, zones: [{ col: 2, row: 0 }, { col: 2, row: 1 }, { col: 2, row: 2 }],outroadDir:"bot" };
+let car3: carInfo = { id: 7, roadDir: "right", roadId: 1, idOnRoad: 1, zones: [{ col: 2, row: 0 }, { col: 2, row: 1 }, { col: 1, row: 1 }, { col: 0, row: 1 }],outroadDir:"left" };
+let car4: carInfo = { id: 8, roadDir: "top", roadId: 1, idOnRoad: 0, zones: [{ col: 1, row: 0 }, { col: 1, row: 1 }, { col: 1, row: 2 }],outroadDir:"bot" };
+let car5: carInfo = { id: 9, roadDir: "top", roadId: 1, idOnRoad: 1, zones: [{ col: 1, row: 0 }, { col: 2, row: 0 }],outroadDir:"top" };
+
 cars.push(car);
 cars.push(car1);
 cars.push(car2);
@@ -158,8 +251,6 @@ cars.push(car4);
 cars.push(car5);
 
 
-let numofcol: number = 3; /// input
-let numofrow: number = 3; /// input
 
 let CarRoadMap = new Map<number, number[]>();
 
@@ -169,16 +260,11 @@ for (let i = 0; i < cars.length; i++) {
         if (i == j)
             continue;
         if (cars[i].roadDir == cars[j].roadDir && cars[i].roadId == cars[j].roadId) {
-            // let tmp = CarRoadMap.get(cars[i].id);
-            // tmp?.push(cars[j].id);
-            // CarRoadMap.set(cars[i].id,tmp);
+
             CarRoadMap.get(cars[i].id)?.push(cars[j].id);
         }
     }
 }
-
-// console.log(CarRoadMap);
-
 
 
 var zoneId_cardIdMap: carInfo[][] = [[]];
@@ -195,8 +281,7 @@ for (let i = 0; i < cars.length; i++)
     for (let j = 0; j < cars[i].zones.length; j++) {
         let zoneId: number = numofcol * cars[i].zones[j].row + cars[i].zones[j].col;
         zoneId_cardIdMap[zoneId].push(cars[i]);
-        // vertexs.push({id:cars[i].id,zone_id:zoneId});
-        ve.push({ id: cars[i].id, zone_id: zoneId, edges: [], roadId: cars[i].roadId });
+        ve.push({ id: cars[i].id, zone_id: zoneId, edges: []});
         if (j != 0) {
             ve[num - 1].edges.push({ type: 1, in: { id: cars[i].id, zone_id: ve[num - 1].zone_id }, out: { id: cars[i].id, zone_id: zoneId } });
             //edges.push({type:1,in:{id:cars[i].id,zone_id:vertexs[num - 1].zone_id},out:{id:cars[i].id,zone_id:zoneId}});
@@ -226,11 +311,11 @@ for (let i = 0; i < total_zone; i++) {
     }
 }
 
-let aa: vertexWithEdge[] = [];
 
-// console.log(ve);
+
+
 console.log(ve);
-let n: number = 0;///////////////////
+let n: number = 0;///////debug use
 let successType3Edge: edge[] = [];
 while (true) {
     let removedtype3edge: edge[] = [];
@@ -242,7 +327,7 @@ while (true) {
     //console.log(removedtype3edge);
     console.log(n);
     n++;
-    if (n == 10000)////////////////////
+    if (n == 10000)////// debug use
         break;
     if (!isDeadLock(ve, removedtype3edge)) {
         successType3Edge = removedtype3edge;
@@ -252,6 +337,101 @@ while (true) {
 }
 console.log(successType3Edge);
 
+//add type3Edge to vertex
 for (let i = 0; i < successType3Edge.length; i++) {
-
+    ve.find(element=>(element.id == successType3Edge[i].in.id) && (element.zone_id == successType3Edge[i].in.zone_id))?.edges.push(successType3Edge[i]);
 }
+
+console.log(ve);
+
+let timeMap = new Map<number,number[]>();
+for(let i = 0;i < cars.length;i++)
+    timeMap.set(cars[i].id,[-cars[i].idOnRoad - 1]);
+
+
+let CarIdOnRoad = new Map<number,number>();
+for(let i = 0;i < cars.length;i++)
+    CarIdOnRoad.set(cars[i].id,cars[i].idOnRoad);
+
+let time:number = 2;
+
+while(ve.length > 0){
+    for(let i = 0;i < ve.length;i++){
+        if(!ve.find(element=>(element.edges.find(ele=>(ele.out.id == ve[i].id && ele.out.zone_id == ve[i].zone_id))))){
+            if(ve[i].id == 10)
+                console.log(ve[i].zone_id);
+            timeMap.get(ve[i].id)?.push(ve[i].zone_id);
+            ve[i].zone_id = -1;
+        }else{
+            var timeMovement = timeMap.get(ve[i].id);
+            if(timeMovement.length < time)
+                timeMovement?.push(timeMovement[timeMovement.length - 1]);
+        }
+    }
+
+    for(let i = 0;i < ve.length;i++){
+        if(ve[i].zone_id == -1){
+            if(CarIdOnRoad.get(ve[i].id) == 0){
+                var carOnsameRoad:number[] = CarRoadMap.get(ve[i].id);
+                for(let j = 0;j < carOnsameRoad?.length;j++){
+                    if(CarIdOnRoad.get(carOnsameRoad[j]) < 0){
+                        continue;
+                    }
+                    var timeMovement = timeMap.get(carOnsameRoad[j]);
+                    timeMovement[timeMovement.length - 1]++;
+                    let idroad = CarIdOnRoad.get(carOnsameRoad[j]);
+                    CarIdOnRoad.set(carOnsameRoad[j],idroad - 1);
+                }
+                CarIdOnRoad.set(ve[i].id,-1);
+            }
+            ve.splice(i,1);
+            i--;
+        }
+    }
+    time++;
+}
+console.log(timeMap);
+
+var timeDirectionMap = new Map<number,string[]>();
+
+for(let i = 0;i < cars.length;i++){
+    var timeDirection:string[] = [];
+    var timeConflictZone = timeMap.get(cars[i].id);
+    let counter:number = 0;
+    let z1:number = -1,z2:number = -2,z3:number = -2;
+    for(let j = 0;j < timeConflictZone?.length - 1;j++){
+        if(timeConflictZone[j] < -1){
+            if(timeConflictZone[j + 1] > timeConflictZone[j])
+                timeDirection.push("foward");
+            else
+                timeDirection.push("stop");
+        }else{
+            if(timeConflictZone[j + 1] == -1){
+                timeDirection.push("stop");
+                continue;
+            }
+            if(z2 == -2){
+                z2 = timeConflictZone[j + 1];
+            }
+            if(j == timeConflictZone.length - 2){
+                z3 = -1;
+            }else
+                z3 = timeConflictZone[j + 2];
+
+            if(z2 == z3){
+                counter++;
+            }else{
+                let dir:string = getDir(z1,z2,z3,cars[i],numofrow,numofcol);
+                timeDirection.push(dir);
+                for(let k = 0;k < counter;k++)
+                    timeDirection.push("stop");
+                z1 = z2;
+                z2 = z3;
+                counter = 0;
+            }
+        }
+    }
+    timeDirection.push("foward");
+    timeDirectionMap.set(cars[i].id,timeDirection);
+}
+console.log(timeDirectionMap);
