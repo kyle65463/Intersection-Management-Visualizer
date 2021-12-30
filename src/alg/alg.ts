@@ -156,7 +156,6 @@ function getDir(
   z2: number,
   z3: number,
   car: carInfo,
-  row: number,
   col: number
 ): action {
   if (z1 == -1) {
@@ -232,13 +231,13 @@ function getDir(
     case -col: // to top
       switch (z3 - z2) {
         case 1:
-          return "left";
-        case -1:
           return "right";
+        case -1:
+          return "left";
         case col:
-          return "foward";
-        case -col:
           return "nonsense";
+        case -col:
+          return "foward";
       }
       break;
   }
@@ -253,7 +252,9 @@ export function getTimeMap(
   numofcol: number,
   numofrow: number
 ): Map<number, action[]> {
+
   let CarRoadMap = new Map<number, number[]>();
+
 
   for (let i = 0; i < cars.length; i++) {
     CarRoadMap.set(cars[i].id, []);
@@ -344,15 +345,16 @@ export function getTimeMap(
     //console.log(removedtype3edge);
     // console.log(n);
     n++;
-    if (n == 10000)
-      ////// debug use
-      break;
+    // if (n == 10000)
+    //   ////// debug use
+    //   break;
     if (!isDeadLock(ve, removedtype3edge)) {
       successType3Edge = removedtype3edge;
       // console.log(removedtype3edge);
       break;
     }
   }
+  console.log(successType3Edge);
 //   console.log(successType3Edge);
 
   //add type3Edge to vertex
@@ -417,7 +419,8 @@ export function getTimeMap(
     }
     time++;
   }
-
+  console.log(cars);
+  console.log(timeMap);
 
   let timeDirectionMap = new Map<number, action[]>();
 
@@ -449,7 +452,7 @@ export function getTimeMap(
           if (z2 == z3) {
             counter++;
           } else {
-            let dir: action = getDir(z1, z2, z3, cars[i], numofrow, numofcol);
+            let dir: action = getDir(z1, z2, z3, cars[i],numofcol);
             timeDirection.push(dir);
             for (let k = 0; k < counter; k++) timeDirection.push("stop");
             z1 = z2;

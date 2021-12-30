@@ -126,7 +126,7 @@ function Home() {
 									id: car.id,
 									roadDir: car.initialRoad.dir,
 									roadId: car.initialRoad.id,
-									idOnRoad: car.idOnRoad,
+									idOnRoad: car.idOnRoad - 1,
 									zones: car.route,
 									outroadDir: car.destRoad?.dir ?? "right",
 								})),
@@ -141,7 +141,7 @@ function Home() {
 										const actions = map.get(car.id);
 										if (actions && actions.length > i) {
 											const move = Move.from(actions[i]);
-											console.log(move)
+											// console.log(move)
 											move.perform(car, intersection);
 										}
 									}
