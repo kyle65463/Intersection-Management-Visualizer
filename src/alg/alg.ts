@@ -314,7 +314,6 @@ for (let i = 0; i < total_zone; i++) {
 
 
 
-console.log(ve);
 let n: number = 0;///////debug use
 let successType3Edge: edge[] = [];
 while (true) {
@@ -325,7 +324,7 @@ while (true) {
         // removedtype3edge.push({type:3,in:type3edges[i].endpoint[1],out:type3edges[i].endpoint[0]});
     }
     //console.log(removedtype3edge);
-    console.log(n);
+    // console.log(n);
     n++;
     if (n == 10000)////// debug use
         break;
