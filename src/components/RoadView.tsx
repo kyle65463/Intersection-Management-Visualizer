@@ -34,6 +34,7 @@ function RoadView({ road, isDragging, moveCar, setCarDest, intersection }: RoadV
 	return (
 		<div
 			style={{ ...getRoadPos(road, intersection), height: `${roadWidth}px` }}
+			id={`road-${road.dir}-${road.id}`}
 			className={`absolute bg-gray-300 border-gray-500 border-y-2 ${
 				isSelectable || isDropable ? "z-30 cursor-pointer" : ""
 			}`}

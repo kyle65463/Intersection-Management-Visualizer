@@ -3,7 +3,7 @@ import { ConflictZone } from "./confict_zone";
 import { Road } from "./road";
 
 type Turning = "clockwise" | "anti-clockwise" | "none";
-type Color = "blue" | "red" | "green" | "yellow" | "amber" | "indigo" | "sky";
+export type Color = "blue" | "red" | "green" | "yellow" | "amber" | "indigo" | "sky";
 
 export function colorToStyle(color: Color) {
 	switch (color) {

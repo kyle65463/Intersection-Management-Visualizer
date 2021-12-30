@@ -1,3 +1,5 @@
+import { roadWidth } from "./constants";
+
 export type Direction = "left" | "right" | "top" | "bot";
 
 export const dirs: Direction[] = ["left", "right", "top", "bot"];

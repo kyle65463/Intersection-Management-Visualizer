@@ -1,11 +1,13 @@
 import Head from "next/head";
 import { useState } from "react";
 import { useDragLayer } from "react-dnd";
+import Xarrow from "react-xarrows";
 import CarView from "../components/CarView";
 import ConflictZoneView from "../components/ConflictZoneView";
 import RoadsView from "../components/RoadsView";
 import useIntersection from "../hooks/useIntersection";
 import Move from "../models/move";
+import { arrowAnchorOffset, arrowGridBreak, colorMapper } from "../utils/arrow_utils";
 
 function Home() {
 	const [int, setInt] = useState<NodeJS.Timer | undefined>(undefined);
@@ -38,8 +40,29 @@ function Home() {
 				)}
 				<CarView key={demoCar.id} car={demoCar} demo canDrag={!isStart} intersection={intersection} />
 				{cars.map((car) => (
-					<CarView key={car.id} car={car} canDrag={!isStart} intersection={intersection} />
+					<>
+						<CarView key={car.id} car={car} canDrag={!isStart} intersection={intersection} />
+						{car.destRoad && (
+							<Xarrow
+								zIndex={10}
+								path='grid'
+								strokeWidth={2.2}
+								headSize={3.8}
+								headShape='circle'
+								color={colorMapper(car.color)}
+								gridBreak={arrowGridBreak(intersection, car.initialRoad.dir, car.destRoad.dir)}
+								startAnchor={{
+									position: "auto",
+									offset: arrowAnchorOffset(car.initialRoad.dir, "start"),
+								}}
+								endAnchor={{ position: "auto", offset: arrowAnchorOffset(car.destRoad.dir, "end") }}
+								start={`road-${car.initialRoad.dir}-${car.initialRoad.id}`}
+								end={`road-${car.destRoad.dir}-${car.destRoad.id}`}
+							/>
+						)}
+					</>
 				))}
+
 				{roadCollections.map((roads, i) => (
 					<RoadsView
 						key={i}

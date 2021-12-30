@@ -135,7 +135,7 @@ export function getCarPos({ curZone: zone, rotation, turning, dir, idOnRoad }: C
 				style = {
 					...style,
 					left: getZonePos(road.id + startIndex, 0, intersection, {
-						left: `${roadBorderWidth / 2}px + ${(0.83 * carWidth) / 2}px`,
+						left: `${roadBorderWidth / 2}px + ${(0.76 * carWidth) / 2}px`,
 					}).left,
 				};
 			} else {
@@ -151,7 +151,7 @@ export function getCarPos({ curZone: zone, rotation, turning, dir, idOnRoad }: C
 				style = {
 					...style,
 					left: getZonePos(road.id + startIndex, 0, intersection, {
-						left: `${roadBorderWidth / 2}px + ${(0.83 * carWidth) / 2}px`,
+						left: `${roadBorderWidth / 2}px + ${(0.76 * carWidth) / 2}px`,
 					}).left,
 				};
 			}
