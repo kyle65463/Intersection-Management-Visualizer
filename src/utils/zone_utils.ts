@@ -4,6 +4,14 @@ import { ConflictZone } from "../models/confict_zone";
 import { Road } from "../models/road";
 import { Direction } from "./dir_utils";
 
+function getRoadOffset(dir: Direction, intersection: Intersection) {
+	if (dir === "right") return rightRoadOffset(intersection);
+	if (dir === "left") return leftRoadOffset(intersection);
+	if (dir === "top") return topRoadOffset(intersection);
+	if (dir === "bot") return botRoadOffset(intersection);
+	return rightRoadOffset(intersection);
+}
+
 const rightRoadOffset = ({ zonesSize: { numRow }, roadCollections }: Intersection) =>
 	~~((numRow - (roadCollections.find((col) => col.dir == "right")?.roads.length ?? 0)) / 2);
 const leftRoadOffset = ({ zonesSize: { numRow }, roadCollections }: Intersection) =>
@@ -84,4 +92,113 @@ export function getZoneFrontOfCar(car: Car, intersection: Intersection): Road | 
 		}
 		return getConflictZone(zoneCol, zoneRow, intersection);
 	}
+}
+
+export function getCarRoute(car: Car, intersection: Intersection): ConflictZone[] {
+	const {
+		zonesSize: { numCol, numRow },
+	} = intersection;
+	const { initialRoad, destRoad } = car;
+	const route: ConflictZone[] = [];
+	if (initialRoad && destRoad) {
+		const initialRoadId = initialRoad.id + getRoadOffset(initialRoad.dir, intersection);
+		const destRoadId = destRoad.id + getRoadOffset(destRoad.dir, intersection);
+		switch (initialRoad.dir) {
+			case "right":
+				switch (destRoad.dir) {
+					case "left":
+						const breakPoint = Math.floor(numCol / 2);
+						for (let i = numCol - 1; i >= breakPoint; i--) route.push({ col: i, row: initialRoadId });
+						if (initialRoadId > destRoadId)
+							for (let i = initialRoadId - 1; i >= destRoadId; i--)
+								route.push({ col: breakPoint, row: i });
+						else
+							for (let i = initialRoadId + 1; i <= destRoadId; i++)
+								route.push({ col: breakPoint, row: i });
+						for (let i = breakPoint - 1; i >= 0; i--) route.push({ col: i, row: destRoadId });
+						break;
+					case "top":
+						for (let i = numCol - 1; i >= destRoadId; i--) route.push({ col: i, row: initialRoadId });
+						for (let i = initialRoadId - 1; i >= 0; i--) route.push({ col: destRoadId, row: i });
+						break;
+					case "bot":
+						for (let i = numCol - 1; i >= destRoadId; i--) route.push({ col: i, row: initialRoadId });
+						for (let i = initialRoadId + 1; i < numRow; i++) route.push({ col: destRoadId, row: i });
+						break;
+				}
+				break;
+			case "left":
+				switch (destRoad.dir) {
+					case "right":
+						let breakPoint = Math.floor(numCol / 2);
+						if (numCol % 2 == 0) breakPoint--;
+						for (let i = 0; i <= breakPoint; i++) route.push({ col: i, row: initialRoadId });
+						if (initialRoadId > destRoadId)
+							for (let i = initialRoadId - 1; i >= destRoadId; i--)
+								route.push({ col: breakPoint, row: i });
+						else
+							for (let i = initialRoadId + 1; i <= destRoadId; i++)
+								route.push({ col: breakPoint, row: i });
+						for (let i = breakPoint + 1; i < numCol; i++) route.push({ col: i, row: destRoadId });
+						break;
+					case "top":
+						for (let i = 0; i <= destRoadId; i++) route.push({ col: i, row: initialRoadId });
+						for (let i = initialRoadId - 1; i >= 0; i--) route.push({ col: destRoadId, row: i });
+						break;
+					case "bot":
+						for (let i = 0; i <= destRoadId; i++) route.push({ col: i, row: initialRoadId });
+						for (let i = initialRoadId + 1; i < numRow; i++) route.push({ col: destRoadId, row: i });
+						break;
+				}
+				break;
+			case "top":
+				switch (destRoad.dir) {
+					case "bot":
+						let breakPoint = Math.floor(numRow / 2);
+						if (numRow % 2 == 0) breakPoint--;
+						for (let i = 0; i <= breakPoint; i++) route.push({ col: initialRoadId, row: i });
+						if (initialRoadId > destRoadId)
+							for (let i = initialRoadId - 1; i >= destRoadId; i--)
+								route.push({ col: i, row: breakPoint });
+						else
+							for (let i = initialRoadId + 1; i <= destRoadId; i++)
+								route.push({ col: i, row: breakPoint });
+						for (let i = breakPoint + 1; i < numRow; i++) route.push({ col: destRoadId, row: i });
+						break;
+					case "left":
+						for (let i = 0; i <= destRoadId; i++) route.push({ col: initialRoadId, row: i });
+						for (let i = initialRoadId - 1; i >= 0; i--) route.push({ col: i, row: destRoadId });
+						break;
+					case "right":
+						for (let i = 0; i <= destRoadId; i++) route.push({ col: initialRoadId, row: i });
+						for (let i = initialRoadId + 1; i < numCol; i++) route.push({ col: i, row: destRoadId });
+						break;
+				}
+				break;
+			case "bot":
+				switch (destRoad.dir) {
+					case "top":
+						let breakPoint = Math.floor(numRow / 2);
+						for (let i = numRow - 1; i >= breakPoint; i--) route.push({ col: initialRoadId, row: i });
+						if (initialRoadId > destRoadId)
+							for (let i = initialRoadId - 1; i >= destRoadId; i--)
+								route.push({ col: i, row: breakPoint });
+						else
+							for (let i = initialRoadId + 1; i <= destRoadId; i++)
+								route.push({ col: i, row: breakPoint });
+						for (let i = breakPoint - 1; i >= 0; i--) route.push({ col: destRoadId, row: i });
+						break;
+					case "left":
+						for (let i = numRow - 1; i >= destRoadId; i--) route.push({ col: initialRoadId, row: i });
+						for (let i = initialRoadId - 1; i >= 0; i--) route.push({ col: i, row: destRoadId });
+						break;
+					case "right":
+						for (let i = numRow - 1; i >= destRoadId; i--) route.push({ col: initialRoadId, row: i });
+						for (let i = initialRoadId + 1; i < numCol; i++) route.push({ col: i, row: destRoadId });
+						break;
+				}
+				break;
+		}
+	}
+	return route;
 }

@@ -1,4 +1,6 @@
+import { Intersection } from "../hooks/useIntersection";
 import { Direction, dirRoation, relativeDir } from "../utils/dir_utils";
+import { getCarRoute } from "../utils/zone_utils";
 import { ConflictZone } from "./confict_zone";
 import { Road } from "./road";
 
@@ -39,6 +41,11 @@ export class Car {
 		this.initialIdOnRoad = road.numCars;
 	};
 
+	public setDestRoad = (road: Road, intersection: Intersection) => {
+		this.destRoad = road;
+		this.route = getCarRoute(this, intersection);
+	};
+
 	public setRandomColor = (exclude?: Color) => {
 		const colors: any = ["blue", "red", "green", "yellow", "amber", "indigo", "sky"];
 		let rand = Math.floor(Math.random() * Object.keys(colors).length);
@@ -62,4 +69,5 @@ export class Car {
 	public turning: Turning = "none";
 	public color: Color = "blue";
 	public isEnd: boolean = false;
+	public route: ConflictZone[] = [];
 }

@@ -97,12 +97,15 @@ function useIntersection() {
 
 	const addRoad = useCallback((road: Road) => {
 		setIntersection((intersection) => {
-			const { roadCollections } = intersection;
+			const { roadCollections, cars } = intersection;
 			const roadsId = roadCollections.findIndex((roads) => roads.dir === road.dir);
 			if (!roadCollections[roadsId].roads.find((e) => e.id == road.id)) {
 				if (roadCollections[roadsId].roads.length < maxRoadNum) roadCollections[roadsId].roads.push(road);
 			}
 			updateZones(intersection);
+			cars.forEach((car) => {
+				if (car.destRoad) car.setDestRoad(car.destRoad, intersection);
+			});
 			return { ...intersection };
 		});
 	}, []);
@@ -144,7 +147,7 @@ function useIntersection() {
 	const setCarDest = useCallback((road: Road) => {
 		setIntersection((intersection) => {
 			const { selectingDestCar } = intersection;
-			if (selectingDestCar) selectingDestCar.destRoad = road;
+			if (selectingDestCar) selectingDestCar.setDestRoad(road, intersection);
 			road.isDest = true;
 			return { ...intersection, selectingDestCar: undefined, previewingDestCar: selectingDestCar };
 		});
@@ -196,8 +199,8 @@ function useIntersection() {
 		const newIntersection = initialIntersection(numCol, numRow);
 		const numRoads = (numCol + numRow) * 2;
 		const numCar = getRandomInt(numRoads / 2, numRoads * 1.6);
+		const { cars, demoCar } = newIntersection;
 		for (let i = 0; i < numCar; i++) {
-			const { cars, demoCar } = newIntersection;
 			const car = new Car(nextCarId.current, demoCar.color);
 			nextCarId.current += 1;
 			const initialRoad = getRandomInitialRoad(newIntersection);
@@ -206,7 +209,7 @@ function useIntersection() {
 				if (destRoad) {
 					initialRoad.addCar(car, true);
 					car.setInitialRoad(initialRoad);
-					car.destRoad = destRoad;
+					car.setDestRoad(destRoad, intersection);
 					destRoad.isDest = true;
 					cars.push(car);
 				}
