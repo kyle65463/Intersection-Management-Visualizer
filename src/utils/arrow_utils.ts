@@ -1,6 +1,5 @@
 import { Intersection } from "../hooks/useIntersection";
 import { Color } from "../models/car";
-import { Road } from "../models/road";
 import { roadWidth } from "./constants";
 import { Direction } from "./dir_utils";
 
@@ -60,19 +59,19 @@ export function arrowGridBreak(intersection: Intersection, srcDir: Direction, de
 export function colorMapper(color: Color) {
 	switch (color) {
 		case "blue":
-			return "rgba(96, 165, 250, 0.9)";
+			return "rgba(96, 165, 250, 1)";
 		case "red":
-			return "rgba(248, 113, 113, 0.9)";
+			return "rgba(248, 113, 113, 1)";
 		case "green":
-			return "rgba(74, 222, 128, 0.9)";
+			return "rgba(74, 222, 128, 1)";
 		case "yellow":
-			return "rgba(250, 204, 21, 0.9)";
+			return "rgba(250, 204, 21, 1)";
 		case "amber":
-			return "rgba(251, 191, 36, 0.9)";
+			return "rgba(251, 191, 36, 1)";
 		case "indigo":
-			return "rgba(129, 140, 248, 0.9)";
+			return "rgba(129, 140, 248, 1)";
 		case "sky":
-			return "rgba(56, 189, 248, 0.9)";
+			return "rgba(56, 189, 248, 1)";
 	}
-	return "rgba(0, 0, 100, 0.9)";
+	return "rgba(0, 0, 100, 1)";
 }

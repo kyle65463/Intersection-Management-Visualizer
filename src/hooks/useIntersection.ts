@@ -17,6 +17,7 @@ export interface Intersection {
 	zones: ConflictZone[];
 	zonesSize: { numCol: number; numRow: number };
 	selectingDestCar?: Car;
+	previewingDestCar?: Car;
 }
 
 function getRandomInt(min: number, max: number): number {
@@ -115,7 +116,7 @@ function useIntersection() {
 					road.addCar(car, true);
 					car.setInitialRoad(road);
 				}
-				return { ...intersection };
+				return { ...intersection, selectingDestCar: car };
 			});
 			// Aleady exists
 		} else {
@@ -129,7 +130,7 @@ function useIntersection() {
 			const { selectingDestCar } = intersection;
 			if (selectingDestCar) selectingDestCar.destRoad = road;
 			road.isDest = true;
-			return { ...intersection, selectingDestCar: undefined };
+			return { ...intersection, selectingDestCar: undefined, previewingDestCar: selectingDestCar };
 		});
 	}, []);
 
@@ -157,7 +158,19 @@ function useIntersection() {
 				car.idOnRoad = car.initialIdOnRoad;
 			}
 			intersection.cars = cars;
-			return { ...intersection };
+			return { ...intersection, selectingDestCar: undefined, previewingDestCar: undefined };
+		});
+	}, []);
+
+	const setPreviewingCar = useCallback((car?: Car) => {
+		setIntersection((intersection) => {
+			return { ...intersection, previewingDestCar: car };
+		});
+	}, []);
+
+	const setSelectingDestCar = useCallback((car?: Car) => {
+		setIntersection((intersection) => {
+			return { ...intersection, selectingDestCar: car };
 		});
 	}, []);
 
@@ -190,6 +203,8 @@ function useIntersection() {
 		addRoad,
 		setCars,
 		setCarDest,
+		setPreviewingCar,
+		setSelectingDestCar,
 		randomIntersection,
 		reset,
 		...intersection,

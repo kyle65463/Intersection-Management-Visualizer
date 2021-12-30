@@ -19,6 +19,8 @@ function Home() {
 		moveCar,
 		addRoad,
 		setCarDest,
+		setPreviewingCar,
+		setSelectingDestCar,
 		roadCollections,
 		zones,
 		setCars,
@@ -34,22 +36,57 @@ function Home() {
 				<title>Title</title>
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
-			<main className='container relative min-h-screen py-5 mx-auto'>
+			<main
+				onClick={(event) => {
+					if (event.target === event.currentTarget) setPreviewingCar(undefined);
+				}}
+				className='container relative min-h-screen py-5 mx-auto'
+			>
 				{(intersection.selectingDestCar || isDragging) && (
-					<div className='bg-gray-600 opacity-60 w-screen h-screen z-20 fixed top-0 left-0' />
+					<div className='fixed top-0 left-0 z-20 w-screen h-screen bg-gray-600 opacity-60' />
 				)}
 				<CarView key={demoCar.id} car={demoCar} demo canDrag={!isStart} intersection={intersection} />
 				{cars.map((car) => (
 					<>
-						<CarView key={car.id} car={car} canDrag={!isStart} intersection={intersection} />
-						{car.destRoad && (
+						<CarView
+							key={car.id}
+							car={car}
+							canDrag={!isStart}
+							intersection={intersection}
+							setPreviewingCar={setPreviewingCar}
+							setSelectingDestCar={setSelectingDestCar}
+						/>
+						{!isStart &&
+							!intersection.selectingDestCar &&
+							intersection.previewingDestCar &&
+							car == intersection.previewingDestCar &&
+							car.destRoad && (
+								<Xarrow
+									zIndex={15}
+									path='grid'
+									strokeWidth={2.2}
+									headSize={3.8}
+									headShape='circle'
+									color={colorMapper(car.color)}
+									gridBreak={arrowGridBreak(intersection, car.initialRoad.dir, car.destRoad.dir)}
+									startAnchor={{
+										position: "auto",
+										offset: arrowAnchorOffset(car.initialRoad.dir, "start"),
+									}}
+									endAnchor={{ position: "auto", offset: arrowAnchorOffset(car.destRoad.dir, "end") }}
+									start={`road-${car.initialRoad.dir}-${car.initialRoad.id}`}
+									end={`road-${car.destRoad.dir}-${car.destRoad.id}`}
+								/>
+							)}
+						{!isStart && car.destRoad && (
 							<Xarrow
 								zIndex={10}
-								path='grid'
 								strokeWidth={2.2}
+								showTail={false}
 								headSize={3.8}
 								headShape='circle'
-								color={colorMapper(car.color)}
+								color='transparent'
+								headColor={colorMapper(car.color)}
 								gridBreak={arrowGridBreak(intersection, car.initialRoad.dir, car.destRoad.dir)}
 								startAnchor={{
 									position: "auto",

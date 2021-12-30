@@ -9,10 +9,12 @@ interface CarViewProps {
 	car: Car;
 	demo?: boolean;
 	canDrag: boolean;
+	setPreviewingCar?: (car: Car) => void;
+	setSelectingDestCar?: (car: Car) => void;
 	intersection: Intersection;
 }
 
-function CarView({ car, demo, canDrag, intersection }: CarViewProps) {
+function CarView({ car, demo, canDrag, intersection, setPreviewingCar, setSelectingDestCar }: CarViewProps) {
 	const [{ opacity }, dragRef] = useDrag(
 		() => ({
 			type: ItemTypes.CAR,
@@ -26,6 +28,8 @@ function CarView({ car, demo, canDrag, intersection }: CarViewProps) {
 
 	return (
 		<div
+			onClick={!car.started ? () => setPreviewingCar?.(car) : undefined}
+			onDoubleClick={!car.started ? () => setSelectingDestCar?.(car) : undefined}
 			style={{
 				...(demo ? getDemoCarPos(intersection) : getCarPos(car, intersection)),
 				width: `${demo ? carLength * 1.7 : carLength}px`,
