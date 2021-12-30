@@ -117,7 +117,7 @@ function Home() {
 
 				<div style={{ bottom: "100px", right: "270px" }} className='absolute flex flex-col justify-end'>
 					<button
-						className='btn btn-accent'
+						className='btn btn-success'
 						disabled={isStart}
 						onClick={() => {
 							const interval = setInterval(() => {
@@ -138,15 +138,18 @@ function Home() {
 				</div>
 				<div style={{ bottom: "100px", right: "177px" }} className='absolute flex flex-col justify-end'>
 					<button
-						className='btn'
-						disabled={!isStart}
+						className='btn btn-warning'
 						onClick={() => {
-							if (int) clearInterval(int);
-							setIsStart(false);
-							reset();
+							if (isStart) {
+								if (int) clearInterval(int);
+								setIsStart(false);
+								reset();
+							} else {
+								window.location.reload();
+							}
 						}}
 					>
-						Reset
+						{isStart ? "Reset" : "Clear"}
 					</button>
 				</div>
 				<div style={{ bottom: "100px", right: "60px" }} className='absolute flex flex-col justify-end'>

@@ -26,10 +26,26 @@ function getRandomInt(min: number, max: number): number {
 	return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
 }
 
-function getRandomRoad({ roadCollections }: Intersection): Road | undefined {
-	const dir = dirs[Math.floor(Math.random() * dirs.length)];
-	const col = roadCollections.find((col) => col.dir == dir);
-	return col?.roads[Math.floor(Math.random() * col?.roads.length)];
+function getRandomInitialRoad({ roadCollections }: Intersection): Road | undefined {
+	let roads = [
+		...roadCollections[0].roads,
+		...roadCollections[1].roads,
+		...roadCollections[2].roads,
+		...roadCollections[3].roads,
+	];
+	roads = roads.filter((road) => !road.isDest && road.numCars < 4);
+	return roads[Math.floor(Math.random() * roads.length)];
+}
+
+function getRandomDestRoad({ roadCollections }: Intersection, initialRoad: Road): Road | undefined {
+	let roads = [
+		...roadCollections[0].roads,
+		...roadCollections[1].roads,
+		...roadCollections[2].roads,
+		...roadCollections[3].roads,
+	];
+	roads = roads.filter((road) => road.numCars == 0 && road.dir != initialRoad.dir);
+	return roads[Math.floor(Math.random() * roads.length)];
 }
 
 const initialIntersection = (numCol: number, numRow: number): Intersection => {
@@ -184,11 +200,16 @@ function useIntersection() {
 			const { cars, demoCar } = newIntersection;
 			const car = new Car(nextCarId.current, demoCar.color);
 			nextCarId.current += 1;
-			const road = getRandomRoad(newIntersection);
-			if (road && road.cars.length < 4) {
-				road.addCar(car, true);
-				car.setInitialRoad(road);
-				cars.push(car);
+			const initialRoad = getRandomInitialRoad(newIntersection);
+			if (initialRoad) {
+				const destRoad = getRandomDestRoad(newIntersection, initialRoad);
+				if (destRoad) {
+					initialRoad.addCar(car, true);
+					car.setInitialRoad(initialRoad);
+					car.destRoad = destRoad;
+					destRoad.isDest = true;
+					cars.push(car);
+				}
 			}
 
 			// Regenerate a color for demo car
