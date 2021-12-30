@@ -2,6 +2,7 @@ import Head from "next/head";
 import { useState } from "react";
 import { useDragLayer } from "react-dnd";
 import Xarrow from "react-xarrows";
+import { getTimeMap } from "../alg/alg";
 import CarView from "../components/CarView";
 import ConflictZoneView from "../components/ConflictZoneView";
 import RoadsView from "../components/RoadsView";
@@ -120,14 +121,33 @@ function Home() {
 						className='btn btn-success'
 						disabled={isStart}
 						onClick={() => {
+							const map = getTimeMap(
+								intersection.cars.map((car) => ({
+									id: car.id,
+									roadDir: car.initialRoad.dir,
+									roadId: car.initialRoad.id,
+									idOnRoad: car.idOnRoad,
+									zones: car.route,
+									outroadDir: car.destRoad?.dir ?? "right",
+								})),
+								intersection.zonesSize.numCol,
+								intersection.zonesSize.numRow
+							);
+							console.log(map)
+							let i = 0;
 							const interval = setInterval(() => {
 								for (const car of cars) {
 									if (!car.isEnd) {
-										const move = Move.generateRandomMove();
-										move.perform(car, intersection);
+										const actions = map.get(car.id);
+										if (actions && actions.length > i) {
+											const move = Move.from(actions[i]);
+											console.log(move)
+											move.perform(car, intersection);
+										}
 									}
 								}
 								setCars([...cars]);
+								i++;
 							}, 200);
 							setIsStart(true);
 							setInt(interval);

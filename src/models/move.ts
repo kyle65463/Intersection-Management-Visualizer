@@ -36,6 +36,19 @@ export default abstract class Move {
 			return new MoveRight();
 		}
 	}
+
+	static from(action: string): Move {
+		if (action === "right") {
+			return new MoveRight();
+		}
+		if (action === "left") {
+			return new MoveLeft();
+		}
+		if (action === "foward") {
+			return new MoveForward();
+		}
+		return new Stop();
+	}
 }
 
 export class Stop extends Move {
@@ -63,9 +76,9 @@ export class MoveLeft extends Move {
 	public perform(car: Car, intersection: Intersection) {
 		super.perform(car, intersection);
 		if (!(car.curZone instanceof Road)) {
-			car.dir = relativeDir(car.dir, "clockwise");
-			car.rotation += 45;
-			car.turning = "clockwise";
+			car.dir = relativeDir(car.dir, "anti-clockwise");
+			car.rotation -= 45;
+			car.turning = "anti-clockwise";
 		}
 	}
 }

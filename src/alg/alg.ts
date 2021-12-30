@@ -1,8 +1,8 @@
-import { Direction } from "../models/road";
 import * as readline from "readline";
 import { type } from "os";
 import { cp } from "fs";
 import { get } from "http";
+import { Direction } from "../utils/dir_utils";
 export const a = "a";
 
 interface carInfo {
