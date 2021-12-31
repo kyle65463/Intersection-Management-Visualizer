@@ -288,8 +288,8 @@ export function getRoadBtnPos(roads: Road[], intersection: Intersection) {
 }
 
 export function getDemoCarPos(intersection: Intersection) {
-	const leftRoad = new Road(-4, "top");
-	const topRoad = new Road(-2, "left");
+	const leftRoad = new Road(-8.5, "top");
+	const topRoad = new Road(-3.5, "left");
 	return {
 		top: (getRoadPos(topRoad, intersection) as any).top,
 		left: (getRoadPos(leftRoad, intersection) as any).left,

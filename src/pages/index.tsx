@@ -5,6 +5,7 @@ import Xarrow from "react-xarrows";
 import { getTimeMap } from "../alg/alg";
 import CarView from "../components/CarView";
 import ConflictZoneView from "../components/ConflictZoneView";
+import DemoCarView from "../components/DemoCarView";
 import RoadsView from "../components/RoadsView";
 import useIntersection from "../hooks/useIntersection";
 import Move from "../models/move";
@@ -17,6 +18,7 @@ function Home() {
 		intersection,
 		cars,
 		demoCar,
+		showInitialHint,
 		moveCar,
 		addRoad,
 		setCarDest,
@@ -26,6 +28,7 @@ function Home() {
 		zones,
 		setCars,
 		reset,
+		clear,
 		randomIntersection,
 	} = useIntersection();
 
@@ -46,7 +49,13 @@ function Home() {
 				{(intersection.selectingDestCar || isDragging) && (
 					<div className='fixed top-0 left-0 z-20 w-screen h-screen bg-gray-600 opacity-60' />
 				)}
-				<CarView key={demoCar.id} car={demoCar} demo canDrag={!isStart} intersection={intersection} />
+				<DemoCarView
+					key={demoCar.id}
+					car={demoCar}
+					canDrag={!isStart}
+					intersection={intersection}
+					showHint={showInitialHint}
+				/>
 				{cars.map((car) => (
 					<>
 						<CarView
@@ -121,6 +130,16 @@ function Home() {
 						className='btn btn-success'
 						disabled={isStart}
 						onClick={() => {
+							console.log(
+								intersection.cars.map((car) => ({
+									id: car.id,
+									roadDir: car.initialRoad.dir,
+									roadId: car.initialRoad.id,
+									idOnRoad: car.idOnRoad - 1,
+									zones: car.route,
+									outroadDir: car.destRoad?.dir ?? "right",
+								}))
+							);
 							const map = getTimeMap(
 								intersection.cars.map((car) => ({
 									id: car.id,
@@ -133,7 +152,6 @@ function Home() {
 								intersection.zonesSize.numCol,
 								intersection.zonesSize.numRow
 							);
-							console.log(map)
 							let i = 0;
 							const interval = setInterval(() => {
 								for (const car of cars) {
@@ -141,7 +159,6 @@ function Home() {
 										const actions = map.get(car.id);
 										if (actions && actions.length > i) {
 											const move = Move.from(actions[i]);
-											// console.log(move)
 											move.perform(car, intersection);
 										}
 									}
@@ -165,7 +182,7 @@ function Home() {
 								setIsStart(false);
 								reset();
 							} else {
-								window.location.reload();
+								clear();
 							}
 						}}
 					>

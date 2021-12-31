@@ -18,6 +18,7 @@ export interface Intersection {
 	zonesSize: { numCol: number; numRow: number };
 	selectingDestCar?: Car;
 	previewingDestCar?: Car;
+	showInitialHint: boolean;
 }
 
 function getRandomInt(min: number, max: number): number {
@@ -59,6 +60,7 @@ const initialIntersection = (numCol: number, numRow: number): Intersection => {
 		zones: [],
 		zonesSize: { numCol, numRow },
 		selectingDestCar: undefined,
+		showInitialHint: true,
 	};
 	for (let i = 0; i < numCol; i++) {
 		for (let j = 0; j < numRow; j++) {
@@ -121,7 +123,7 @@ function useIntersection() {
 
 			// Regenerate a color for demo car
 			demoCar.setRandomColor(demoCar.color);
-			return { ...intersection, selectingDestCar: car };
+			return { ...intersection, selectingDestCar: car, showInitialHint: false };
 		});
 	}, []);
 
@@ -135,7 +137,7 @@ function useIntersection() {
 					road.addCar(car, true);
 					car.setInitialRoad(road);
 				}
-				return { ...intersection, selectingDestCar: car };
+				return { ...intersection, selectingDestCar: car, showInitialHint: false };
 			});
 			// Aleady exists
 		} else {
@@ -181,6 +183,11 @@ function useIntersection() {
 		});
 	}, []);
 
+	const clear = useCallback(() => {
+		const intersection = initialIntersection(3, 3);
+		setIntersection(intersection);
+	}, []);
+
 	const setPreviewingCar = useCallback((car?: Car) => {
 		setIntersection((intersection) => {
 			return { ...intersection, previewingDestCar: car };
@@ -209,7 +216,7 @@ function useIntersection() {
 				if (destRoad) {
 					initialRoad.addCar(car, true);
 					car.setInitialRoad(initialRoad);
-					car.setDestRoad(destRoad, intersection);
+					car.setDestRoad(destRoad, newIntersection);
 					destRoad.isDest = true;
 					cars.push(car);
 				}
@@ -218,6 +225,7 @@ function useIntersection() {
 			// Regenerate a color for demo car
 			demoCar.setRandomColor(demoCar.color);
 		}
+		newIntersection.showInitialHint = false;
 		setIntersection(newIntersection);
 	}, []);
 
@@ -231,6 +239,7 @@ function useIntersection() {
 		setSelectingDestCar,
 		randomIntersection,
 		reset,
+		clear,
 		...intersection,
 	};
 }
