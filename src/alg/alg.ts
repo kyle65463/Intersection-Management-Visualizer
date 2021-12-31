@@ -26,6 +26,8 @@ interface vertexWithEdge {
   id: number;
   zone_id: number;
   edges: edge[];
+  nextElement: vertex;
+  deletestage: number;
   // roadId: number
 }
 interface type3edge {
@@ -156,7 +158,6 @@ function getDir(
   z2: number,
   z3: number,
   car: carInfo,
-  row: number,
   col: number
 ): action {
   if (z1 == -1) {
@@ -232,19 +233,18 @@ function getDir(
     case -col: // to top
       switch (z3 - z2) {
         case 1:
-          return "left";
-        case -1:
           return "right";
+        case -1:
+          return "left";
         case col:
-          return "foward";
-        case -col:
           return "nonsense";
+        case -col:
+          return "foward";
       }
       break;
   }
   return "nonsense";
 }
-
 
 type action = "right" | "foward" | "stop" | "left" | "nonsense";
 
@@ -252,7 +252,8 @@ export function getTimeMap(
   cars: carInfo[],
   numofcol: number,
   numofrow: number
-): Map<number, action[]> {
+): Map<number, action[]>|undefined {
+  console.log(cars);
   let CarRoadMap = new Map<number, number[]>();
 
   for (let i = 0; i < cars.length; i++) {
@@ -281,8 +282,22 @@ export function getTimeMap(
     for (let j = 0; j < cars[i].zones.length; j++) {
       let zoneId: number =
         numofcol * cars[i].zones[j].row + cars[i].zones[j].col;
+      let nextzoneId: number = -1;
+      if (j != cars[i].zones.length - 1) {
+        nextzoneId =
+          numofcol * cars[i].zones[j + 1].row + cars[i].zones[j + 1].col;
+      } else {
+        nextzoneId = numofcol * cars[i].zones[j].row + cars[i].zones[j].col;
+      }
       zoneId_cardIdMap[zoneId].push(cars[i]);
-      ve.push({ id: cars[i].id, zone_id: zoneId, edges: [] });
+      ve.push({
+        id: cars[i].id,
+        zone_id: zoneId,
+        edges: [],
+        nextElement: { id: cars[i].id, zone_id: nextzoneId },
+        deletestage: 0,
+      });
+
       if (j != 0) {
         ve[num - 1].edges.push({
           type: 1,
@@ -330,6 +345,9 @@ export function getTimeMap(
 
   let n: number = 0; ///////debug use
   let successType3Edge: edge[] = [];
+  console.log('right here');
+  console.log(ve);
+  console.log(type3edges);
   while (true) {
     let removedtype3edge: edge[] = [];
     for (let i = 0; i < type3edges.length; i++) {
@@ -344,16 +362,18 @@ export function getTimeMap(
     //console.log(removedtype3edge);
     // console.log(n);
     n++;
-    if (n == 10000)
-      ////// debug use
-      break;
+    if (n == 100000){
+      console.log('404 NOT FOUND');
+      return undefined;
+    }
     if (!isDeadLock(ve, removedtype3edge)) {
       successType3Edge = removedtype3edge;
       // console.log(removedtype3edge);
       break;
     }
   }
-//   console.log(successType3Edge);
+  //   console.log(successType3Edge);
+  //   console.log(successType3Edge);
 
   //add type3Edge to vertex
   for (let i = 0; i < successType3Edge.length; i++) {
@@ -364,8 +384,6 @@ export function getTimeMap(
     )?.edges.push(successType3Edge[i]);
   }
 
-//   console.log(ve);
-
   let timeMap = new Map<number, number[]>();
   for (let i = 0; i < cars.length; i++)
     timeMap.set(cars[i].id, [-cars[i].idOnRoad - 1]);
@@ -375,9 +393,12 @@ export function getTimeMap(
     CarIdOnRoad.set(cars[i].id, cars[i].idOnRoad);
 
   let time: number = 2;
-
+  // console.log(ve);
   while (ve.length > 0) {
+
     for (let i = 0; i < ve.length; i++) {
+      if(ve[i].deletestage == 2)
+        continue;
       if (
         !ve.find((element) =>
           element.edges.find(
@@ -386,7 +407,7 @@ export function getTimeMap(
         )
       ) {
         timeMap.get(ve[i].id)?.push(ve[i].zone_id);
-        ve[i].zone_id = -1;
+        ve[i].deletestage = 1;
       } else {
         let timeMovement = timeMap.get(ve[i].id);
         if (timeMovement && timeMovement.length < time)
@@ -394,8 +415,10 @@ export function getTimeMap(
       }
     }
 
+
     for (let i = 0; i < ve.length; i++) {
-      if (ve[i].zone_id == -1) {
+      if (ve[i].deletestage == 1) {
+
         if (CarIdOnRoad.get(ve[i].id) == 0) {
           let carOnsameRoad: number[] | undefined = CarRoadMap.get(ve[i].id);
           if (carOnsameRoad) {
@@ -411,13 +434,56 @@ export function getTimeMap(
           }
           CarIdOnRoad.set(ve[i].id, -1);
         }
-        ve.splice(i, 1);
-        i--;
+        
+        ve[i].deletestage = 2;
+        let index = ve[i].edges.findIndex(
+          (element) => element.out.id == element.in.id
+        );
+        if (index != -1) {
+          ve[i].edges.splice(index, 1);
+        }
+        let tmpv:vertex = {id:ve[i].id,zone_id:ve[i].zone_id};
+        let ifDelete:boolean = false;
+
+        if (
+          !ve.find((element) =>
+            element.edges.find(
+              (ele) => ele.out.id == ve[i].nextElement.id && ele.out.zone_id == ve[i].nextElement.zone_id
+            )
+          )
+        ){
+          ifDelete = true; /////something I add 
+        }
+
+        if(ve[i].nextElement.zone_id == ve[i].zone_id || ifDelete){
+          ve.splice(i,1);
+        }
+
+        let deleteIndex = ve.findIndex(
+          (element) =>
+            element.nextElement.id == tmpv.id &&
+            element.nextElement.zone_id == tmpv.zone_id &&
+            element.deletestage == 2
+        );
+
+        if (deleteIndex != -1) {
+          ve.splice(deleteIndex, 1);
+        }
+        
+      
+
+     
+        i = -1;
+        // ve.splice(i,1);
+        // i -= 1;
       }
     }
+
+    // console.log(ve.length);
     time++;
   }
-
+  //   console.log(cars);
+  //   console.log(timeMap);
 
   let timeDirectionMap = new Map<number, action[]>();
 
@@ -449,7 +515,7 @@ export function getTimeMap(
           if (z2 == z3) {
             counter++;
           } else {
-            let dir: action = getDir(z1, z2, z3, cars[i], numofrow, numofcol);
+            let dir: action = getDir(z1, z2, z3, cars[i], numofcol);
             timeDirection.push(dir);
             for (let k = 0; k < counter; k++) timeDirection.push("stop");
             z1 = z2;
@@ -465,7 +531,6 @@ export function getTimeMap(
   //console.log(timeDirectionMap);
   return timeDirectionMap;
 }
-
 
 // let cars: carInfo[] = []; /// input
 // let numofcol: number = 3; /// input
@@ -550,5 +615,5 @@ export function getTimeMap(
 // cars.push(car3);
 // cars.push(car4);
 // cars.push(car5);
-// let aaa = getTimeMap(cars,numofcol,numofrow);
+// let aaa = getTimeMap(cars, numofcol, numofrow);
 // console.log(aaa);
