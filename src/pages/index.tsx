@@ -130,12 +130,22 @@ function Home() {
 						className='btn btn-success'
 						disabled={isStart}
 						onClick={() => {
-							const map = getTimeMap(
+							console.log(
 								intersection.cars.map((car) => ({
 									id: car.id,
 									roadDir: car.initialRoad.dir,
 									roadId: car.initialRoad.id,
 									idOnRoad: car.idOnRoad,
+									zones: car.route,
+									outroadDir: car.destRoad?.dir ?? "right",
+								}))
+							);
+							const map = getTimeMap(
+								intersection.cars.map((car) => ({
+									id: car.id,
+									roadDir: car.initialRoad.dir,
+									roadId: car.initialRoad.id,
+									idOnRoad: car.idOnRoad - 1,
 									zones: car.route,
 									outroadDir: car.destRoad?.dir ?? "right",
 								})),

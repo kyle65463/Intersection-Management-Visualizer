@@ -185,7 +185,6 @@ function useIntersection() {
 
 	const clear = useCallback(() => {
 		const intersection = initialIntersection(3, 3);
-		intersection.showInitialHint = false;
 		setIntersection(intersection);
 	}, []);
 
@@ -217,7 +216,7 @@ function useIntersection() {
 				if (destRoad) {
 					initialRoad.addCar(car, true);
 					car.setInitialRoad(initialRoad);
-					car.setDestRoad(destRoad, intersection);
+					car.setDestRoad(destRoad, newIntersection);
 					destRoad.isDest = true;
 					cars.push(car);
 				}
