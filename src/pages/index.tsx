@@ -5,6 +5,7 @@ import Xarrow from "react-xarrows";
 import { getTimeMap } from "../alg/alg";
 import CarView from "../components/CarView";
 import ConflictZoneView from "../components/ConflictZoneView";
+import DemoCarView from "../components/DemoCarView";
 import RoadsView from "../components/RoadsView";
 import useIntersection from "../hooks/useIntersection";
 import Move from "../models/move";
@@ -17,6 +18,7 @@ function Home() {
 		intersection,
 		cars,
 		demoCar,
+		showInitialHint,
 		moveCar,
 		addRoad,
 		setCarDest,
@@ -47,7 +49,13 @@ function Home() {
 				{(intersection.selectingDestCar || isDragging) && (
 					<div className='fixed top-0 left-0 z-20 w-screen h-screen bg-gray-600 opacity-60' />
 				)}
-				<CarView key={demoCar.id} car={demoCar} demo canDrag={!isStart} intersection={intersection} />
+				<DemoCarView
+					key={demoCar.id}
+					car={demoCar}
+					canDrag={!isStart}
+					intersection={intersection}
+					showHint={showInitialHint}
+				/>
 				{cars.map((car) => (
 					<>
 						<CarView
