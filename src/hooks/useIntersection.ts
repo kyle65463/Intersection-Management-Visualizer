@@ -181,6 +181,11 @@ function useIntersection() {
 		});
 	}, []);
 
+	const clear = useCallback(() => {
+		const intersection = initialIntersection(3, 3);
+		setIntersection(intersection)
+	}, []);
+
 	const setPreviewingCar = useCallback((car?: Car) => {
 		setIntersection((intersection) => {
 			return { ...intersection, previewingDestCar: car };
@@ -231,6 +236,7 @@ function useIntersection() {
 		setSelectingDestCar,
 		randomIntersection,
 		reset,
+		clear,
 		...intersection,
 	};
 }

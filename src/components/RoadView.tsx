@@ -20,16 +20,19 @@ function RoadView({ road, isDragging, moveCar, setCarDest, intersection }: RoadV
 		selectingDestCar && selectingDestCar.dir != relativeDir(road.dir, "opposite") && road.cars.length == 0;
 	const isDropable = isDragging && !road.isDest && road.cars.length < maxRoadNum;
 
-	const [, drop] = useDrop(() => ({
-		accept: ItemTypes.CAR,
-		drop: (item: { id: number }) => {
-			if (road.isDest) {
-				// TODO Give a warning
-			} else {
-				moveCar(item.id);
-			}
-		},
-	}));
+	const [, drop] = useDrop(
+		() => ({
+			accept: ItemTypes.CAR,
+			drop: (item: { id: number }) => {
+				if (road.isDest) {
+					// TODO Give a warning
+				} else {
+					moveCar(item.id);
+				}
+			},
+		}),
+		[road, moveCar]
+	);
 
 	return (
 		<div

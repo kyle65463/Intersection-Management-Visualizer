@@ -26,6 +26,7 @@ function Home() {
 		zones,
 		setCars,
 		reset,
+		clear,
 		randomIntersection,
 	} = useIntersection();
 
@@ -133,7 +134,6 @@ function Home() {
 								intersection.zonesSize.numCol,
 								intersection.zonesSize.numRow
 							);
-							console.log(map)
 							let i = 0;
 							const interval = setInterval(() => {
 								for (const car of cars) {
@@ -141,7 +141,6 @@ function Home() {
 										const actions = map.get(car.id);
 										if (actions && actions.length > i) {
 											const move = Move.from(actions[i]);
-											console.log(move)
 											move.perform(car, intersection);
 										}
 									}
@@ -165,7 +164,7 @@ function Home() {
 								setIsStart(false);
 								reset();
 							} else {
-								window.location.reload();
+								clear();
 							}
 						}}
 					>
