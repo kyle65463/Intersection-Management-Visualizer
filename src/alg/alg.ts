@@ -443,9 +443,22 @@ export function getTimeMap(
           ve[i].edges.splice(index, 1);
         }
         let tmpv:vertex = {id:ve[i].id,zone_id:ve[i].zone_id};
-        if(ve[i].nextElement.zone_id == ve[i].zone_id){
+        let ifDelete:boolean = false;
+
+        if (
+          !ve.find((element) =>
+            element.edges.find(
+              (ele) => ele.out.id == ve[i].nextElement.id && ele.out.zone_id == ve[i].nextElement.zone_id
+            )
+          )
+        ){
+          ifDelete = true; /////something I add 
+        }
+
+        if(ve[i].nextElement.zone_id == ve[i].zone_id || ifDelete){
           ve.splice(i,1);
         }
+
         let deleteIndex = ve.findIndex(
           (element) =>
             element.nextElement.id == tmpv.id &&
@@ -456,6 +469,9 @@ export function getTimeMap(
         if (deleteIndex != -1) {
           ve.splice(deleteIndex, 1);
         }
+        
+      
+
      
         i = -1;
         // ve.splice(i,1);
