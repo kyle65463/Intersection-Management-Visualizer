@@ -252,7 +252,7 @@ export function getTimeMap(
   cars: carInfo[],
   numofcol: number,
   numofrow: number
-): Map<number, action[]> {
+): Map<number, action[]>|undefined {
   console.log(cars);
   let CarRoadMap = new Map<number, number[]>();
 
@@ -364,9 +364,7 @@ export function getTimeMap(
     n++;
     if (n == 100000){
       console.log('404 NOT FOUND');
-      let fake = new Map<number,action[]>();
-      return fake;
-      break;
+      return undefined;
     }
     if (!isDeadLock(ve, removedtype3edge)) {
       successType3Edge = removedtype3edge;
