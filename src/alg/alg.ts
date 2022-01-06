@@ -364,7 +364,8 @@ export function getTimeMap(
     n++;
     if (n == 100000){
       console.log('404 NOT FOUND');
-      return undefined;
+      let fake = new Map<number,action[]>();
+      return fake;
     }
     if (!isDeadLock(ve, removedtype3edge)) {
       successType3Edge = removedtype3edge;
@@ -470,9 +471,6 @@ export function getTimeMap(
           ve.splice(deleteIndex, 1);
         }
         
-      
-
-     
         i = -1;
         // ve.splice(i,1);
         // i -= 1;
