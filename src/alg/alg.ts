@@ -53,6 +53,11 @@ interface roadcar{
   idOnRaod:number;
 }
 
+interface carConflictOrder{
+  id:number;
+  order:number;
+}
+
 function getRandomInt(max: number) {
   return Math.floor(Math.random() * max);
 }
@@ -293,7 +298,7 @@ function RandomApproach(removedtype3edge:edge[],type3edges:type3edge[]):void{
 }
 
 function Type2remove(firstcar:vertex,waitcar:vertex,removedtype3edge:edge[],type3edges:type3edge[],cars:carInfo[],CarRoadMap:Map<number,roadcar[]>
-  ,CarpastCarsMap:Map<number,number[]>,CarwaitCarsMap:Map<number,number[]>):void{
+  ,CarpastCarsMap:Map<number,number[]>):void{
 
       let waitcardIdonRoad:number|undefined = cars.find(ele=>ele.id == waitcar.id)?.idOnRoad;
       let CarOnSameRoadw = CarRoadMap.get(waitcar.id);
@@ -308,16 +313,12 @@ function Type2remove(firstcar:vertex,waitcar:vertex,removedtype3edge:edge[],type
                     removedtype3edge.push({type:3,in:firstcar,out:tmpv});
                     if(CarpastCarsMap.get(firstcar.id)?.find(ele=>ele == tmpv.id) == undefined)
                       CarpastCarsMap.get(firstcar.id)?.push(tmpv.id);
-                    if(CarwaitCarsMap.get(tmpv.id)?.find(ele=>ele == firstcar.id) == undefined)
-                      CarwaitCarsMap.get(tmpv.id)?.push(firstcar.id);
                     ele.valid = false;
                 }else if(ele.endpoint[1].id == tmpv.id && ele.endpoint[1].zone_id == tmpv.zone_id &&
                   ele.endpoint[0].id == firstcar.id && ele.endpoint[0].zone_id == firstcar.zone_id){
                     removedtype3edge.push({type:3,in:firstcar,out:tmpv});
                     if(CarpastCarsMap.get(firstcar.id)?.find(ele=>ele == tmpv.id) == undefined)
                       CarpastCarsMap.get(firstcar.id)?.push(tmpv.id);
-                    if(CarwaitCarsMap.get(tmpv.id)?.find(ele=>ele == firstcar.id) == undefined)
-                      CarwaitCarsMap.get(tmpv.id)?.push(firstcar.id);
                     ele.valid = false;
                   }
                 } 
@@ -338,13 +339,11 @@ function Type2remove(firstcar:vertex,waitcar:vertex,removedtype3edge:edge[],type
                   ele.endpoint[1].id == waitcar.id && ele.endpoint[1].zone_id == waitcar.zone_id){
                     removedtype3edge.push({type:3,in:tmpv,out:waitcar});
                     if(CarpastCarsMap.get(tmpv.id)?.find(ele=>ele == waitcar.id) != undefined)CarpastCarsMap.get(tmpv.id)?.push(waitcar.id);
-                    if(CarwaitCarsMap.get(waitcar.id)?.find(ele=>ele == tmpv.id) != undefined)CarwaitCarsMap.get(waitcar.id)?.push(tmpv.id);
                     ele.valid = false;
                 }else if(ele.endpoint[1].id == tmpv.id && ele.endpoint[1].zone_id == tmpv.zone_id &&
                   ele.endpoint[0].id == waitcar.id && ele.endpoint[0].zone_id == waitcar.zone_id){
                     removedtype3edge.push({type:3,in:tmpv,out:waitcar});
                     if(CarpastCarsMap.get(tmpv.id)?.find(ele=>ele == waitcar.id) != undefined)CarpastCarsMap.get(tmpv.id)?.push(waitcar.id);
-                    if(CarwaitCarsMap.get(waitcar.id)?.find(ele=>ele == tmpv.id) != undefined)CarwaitCarsMap.get(waitcar.id)?.push(tmpv.id);
                     ele.valid = false;
                   }
                 } 
@@ -356,7 +355,6 @@ function Type2remove(firstcar:vertex,waitcar:vertex,removedtype3edge:edge[],type
 
 function Type2Approach(removedtype3edge:edge[],type3edges:type3edge[],cars:carInfo[],CarRoadMap:Map<number,roadcar[]>):void{
   let CarpastCarsMap = new Map<number,number[]>();
-  let CarwaitCarsMap = new Map<number,number[]>();
   for (let i = 0; i < type3edges.length; i++) {
     if(type3edges[i].valid){
       let rand = getRandomInt(2);
@@ -366,7 +364,7 @@ function Type2Approach(removedtype3edge:edge[],type3edges:type3edge[],cars:carIn
         out: type3edges[i].endpoint[1 - rand],
       });
       type3edges[i].valid = false;
-      Type2remove(type3edges[i].endpoint[rand],type3edges[i].endpoint[1-rand],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap,CarwaitCarsMap);
+      Type2remove(type3edges[i].endpoint[rand],type3edges[i].endpoint[1-rand],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap);
     }
   }
   type3edges.forEach(ele=>ele.valid = true);
@@ -394,30 +392,10 @@ function recursvieFindPast(CarpastCarsMap:Map<number,number[]>,target:number,cur
   return false;
 }
 
-function recursvieFindWait(CarwaitCarsMap:Map<number,number[]>,target:number,currentId:number,existID:number[]):boolean{
-  let waitCars = CarwaitCarsMap.get(currentId);
-  let IfFind:boolean = false;
-  if(waitCars){
-    for(let i = 0;i < waitCars.length;i++){
-      let ele = waitCars[i];
-      if(ele == target){
-        return true;
-      }
-      if(existID.find(element=>element == ele) == undefined){
-        existID.push(ele);
-        IfFind =  IfFind || recursvieFindWait(CarwaitCarsMap,target,ele,existID);
-      }
-    }
-  }
-  if(IfFind)
-    return true;
-  return false;
-}
 
 
-function FindCarPrevilege(car0:number,car1:number,CarpastCarsMap:Map<number,number[]>,CarwaitCarsMap:Map<number,number[]>):number{
+function FindCarPrevilege(car0:number,car1:number,CarpastCarsMap:Map<number,number[]>):number{
   
-  // console.log(recursvieFindPast(CarpastCarsMap,0,9,[]));
 
   if(recursvieFindPast(CarpastCarsMap,car1,car0,[])){
     return 0;
@@ -427,14 +405,7 @@ function FindCarPrevilege(car0:number,car1:number,CarpastCarsMap:Map<number,numb
     return 1;
   }
 
-  if(recursvieFindWait(CarwaitCarsMap,car1,car0,[])){
-    return 1;
-  }
 
-  if(recursvieFindWait(CarwaitCarsMap,car0,car1,[])){
-    return 0;
-  }
-    
   return -1;
 }
 
@@ -442,22 +413,17 @@ function ConsideALLConflictZoneApproach(removedtype3edge:edge[],type3edges:type3
   CarRoadMap:Map<number,roadcar[]>,CarZoneOrderMap:Map<number,Map<number,number>>):void{
   
   let CarpastCarsMap = new Map<number,number[]>();
-  let CarwaitCarsMap = new Map<number,number[]>();
+
   for(let i = 0;i < cars.length;i++){
     CarpastCarsMap.set(cars[i].id,[]);
-    CarwaitCarsMap.set(cars[i].id,[]);
   }
   
   for(let i = 0;i < cars.length;i++){
     let p = CarpastCarsMap.get(cars[i].id);
-    let w = CarwaitCarsMap.get(cars[i].id);
     let CarsOnsameRoad = CarRoadMap.get(cars[i].id);
     CarsOnsameRoad?.forEach(ele=>{
       if(ele.idOnRaod > cars[i].idOnRoad){
         p?.push(ele.id);  
-      }
-      if(ele.idOnRaod < cars[i].idOnRoad){
-        w?.push(ele.id);  
       }
     })
   }
@@ -467,7 +433,7 @@ function ConsideALLConflictZoneApproach(removedtype3edge:edge[],type3edges:type3
   
   for (let i = 0; i < type3edges.length; i++) {
     if(type3edges[i].valid){
-      let Incar:number = FindCarPrevilege(type3edges[i].endpoint[0].id,type3edges[i].endpoint[1].id,CarpastCarsMap,CarwaitCarsMap);
+      let Incar:number = FindCarPrevilege(type3edges[i].endpoint[0].id,type3edges[i].endpoint[1].id,CarpastCarsMap);
       if(Incar == -1){
         // Incar = getRandomInt(2);
         if(CarZoneOrderMap.get(type3edges[i].endpoint[0].id)?.get(type3edges[i].endpoint[0].zone_id) < CarZoneOrderMap.get(type3edges[i].endpoint[1].id)?.get(type3edges[i].endpoint[1].zone_id)){
@@ -482,12 +448,11 @@ function ConsideALLConflictZoneApproach(removedtype3edge:edge[],type3edges:type3
         out: type3edges[i].endpoint[1 - Incar],
       });
       type3edges[i].valid = false;
-      Type2remove(type3edges[i].endpoint[Incar],type3edges[i].endpoint[1-Incar],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap,CarwaitCarsMap);
+      Type2remove(type3edges[i].endpoint[Incar],type3edges[i].endpoint[1-Incar],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap);
       let firstcarId:number = type3edges[i].endpoint[Incar].id;
       let waitcarId:number = type3edges[i].endpoint[1 - Incar].id;
 
       if(CarpastCarsMap.get(firstcarId)?.find(ele=>ele == waitcarId) == undefined)CarpastCarsMap.get(firstcarId)?.push(waitcarId);
-      if(CarpastCarsMap.get(waitcarId)?.find(ele=>ele == firstcarId) == undefined)CarwaitCarsMap.get(waitcarId)?.push(firstcarId);
 
       type3edges.forEach(ele=>{
         if(ele.valid && ele.endpoint[0].id == firstcarId && ele.endpoint[1].id == waitcarId){
@@ -497,7 +462,7 @@ function ConsideALLConflictZoneApproach(removedtype3edge:edge[],type3edges:type3
             out: ele.endpoint[1],
           });
           ele.valid = false;
-          Type2remove(ele.endpoint[0],ele.endpoint[1],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap,CarwaitCarsMap);
+          Type2remove(ele.endpoint[0],ele.endpoint[1],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap);
         }else if(ele.valid && ele.endpoint[1].id == firstcarId && ele.endpoint[0].id == waitcarId){
           removedtype3edge.push({
             type: 3,
@@ -505,13 +470,187 @@ function ConsideALLConflictZoneApproach(removedtype3edge:edge[],type3edges:type3
             out: ele.endpoint[0],
           });
           ele.valid = false;
-          Type2remove(ele.endpoint[1],ele.endpoint[0],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap,CarwaitCarsMap);
+          Type2remove(ele.endpoint[1],ele.endpoint[0],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap);
         }
       });
     }
   }
   type3edges.forEach(ele=>ele.valid = true);
 }
+
+function Type2removeBetter(firstcar:vertex,waitcar:vertex,removedtype3edge:edge[],type3edges:type3edge[],cars:carInfo[],CarRoadMap:Map<number,roadcar[]>
+  ,CarpastCarsMap:Map<number,carConflictOrder[]>):void{
+
+      let waitcardIdonRoad:number|undefined = cars.find(ele=>ele.id == waitcar.id)?.idOnRoad;
+      let CarOnSameRoadw = CarRoadMap.get(waitcar.id);
+      if(CarOnSameRoadw){
+        CarOnSameRoadw.forEach(element=>{
+          if(element.idOnRaod > waitcardIdonRoad){
+            let tmpv:vertex = {id:element.id,zone_id:firstcar.zone_id};
+            type3edges.forEach(ele=>{
+              if(ele.valid){  
+                if(ele.endpoint[0].id == tmpv.id && ele.endpoint[0].zone_id == tmpv.zone_id &&
+                  ele.endpoint[1].id == firstcar.id && ele.endpoint[1].zone_id == firstcar.zone_id){  
+                    removedtype3edge.push({type:3,in:firstcar,out:tmpv});
+                    CarpastCarsMap.get(firstcar.id)?.push({id:tmpv.id,order:tmpv.zone_id});
+                    ele.valid = false;
+                }else if(ele.endpoint[1].id == tmpv.id && ele.endpoint[1].zone_id == tmpv.zone_id &&
+                  ele.endpoint[0].id == firstcar.id && ele.endpoint[0].zone_id == firstcar.zone_id){
+                    removedtype3edge.push({type:3,in:firstcar,out:tmpv});
+                    CarpastCarsMap.get(firstcar.id)?.push({id:tmpv.id,order:tmpv.zone_id});
+                    ele.valid = false;
+                  }
+                } 
+            });
+        }
+        });
+      }
+
+      let firstcarIdonRoad:number|undefined = cars.find(ele=>ele.id == firstcar.id)?.idOnRoad;
+      let CarOnSameRoadf = CarRoadMap.get(firstcar.id);
+      if(CarOnSameRoadf){
+        CarOnSameRoadf.forEach(element=>{
+          if(element.idOnRaod < firstcarIdonRoad){
+            let tmpv:vertex = {id:element.id,zone_id:waitcar.zone_id};
+            type3edges.forEach(ele=>{
+              if(ele.valid){  
+                if(ele.endpoint[0].id == tmpv.id && ele.endpoint[0].zone_id == tmpv.zone_id &&
+                  ele.endpoint[1].id == waitcar.id && ele.endpoint[1].zone_id == waitcar.zone_id){
+                    removedtype3edge.push({type:3,in:tmpv,out:waitcar});
+                    CarpastCarsMap.get(tmpv.id)?.push({id:waitcar.id,order:tmpv.zone_id});
+                    ele.valid = false;
+                }else if(ele.endpoint[1].id == tmpv.id && ele.endpoint[1].zone_id == tmpv.zone_id &&
+                  ele.endpoint[0].id == waitcar.id && ele.endpoint[0].zone_id == waitcar.zone_id){
+                    removedtype3edge.push({type:3,in:tmpv,out:waitcar});
+                    CarpastCarsMap.get(tmpv.id)?.push({id:waitcar.id,order:tmpv.zone_id});
+                    ele.valid = false;
+                  }
+                } 
+            });
+          }
+        })
+      }
+}
+
+
+function recursvieFindPastBetter(CarpastCarsMap:Map<number,carConflictOrder[]>,target:carConflictOrder,currentId:number,existID:number[],cnt:number):boolean{
+  let pastCars = CarpastCarsMap.get(currentId);
+  let IfFind:boolean = false;
+  if(pastCars){
+    for(let i = 0;i < pastCars.length;i++){
+      let ele = pastCars[i];
+      if(ele.id == target.id && ele.order - cnt <= target.order){
+        return true;
+      }
+      if(existID.find(element=>element == ele.id) == undefined){
+        existID.push(ele.id);
+        // console.log(ele,recursvieFindPast(CarpastCarsMap,target,ele,existID));
+        IfFind =  IfFind || recursvieFindPastBetter(CarpastCarsMap,target,ele.id,existID,cnt);
+      }
+    }
+  }
+  // console.log(IfFind);
+  if(IfFind)
+    return true;
+  return false;
+}
+
+
+
+function FindCarPrevilegeBetter(car0:carConflictOrder,car1:carConflictOrder,CarpastCarsMap:Map<number,carConflictOrder[]>,cnt:number):number{
+
+  if(recursvieFindPastBetter(CarpastCarsMap,car1,car0.id,[],cnt)){
+    return 0;
+  }
+
+  if(recursvieFindPastBetter(CarpastCarsMap,car0,car1.id,[],cnt)){
+    return 1;
+  }
+
+  return -1;
+}
+
+
+function BetterApproach(removedtype3edge:edge[],type3edges:type3edge[],cars:carInfo[],
+  CarRoadMap:Map<number,roadcar[]>,CarZoneOrderMap:Map<number,Map<number,number>>,cnt:number):void{
+  
+  let CarpastCarsMap = new Map<number,carConflictOrder[]>();
+
+  for(let i = 0;i < cars.length;i++){
+    CarpastCarsMap.set(cars[i].id,[]);
+  }
+  
+  for(let i = 0;i < cars.length;i++){
+    let p = CarpastCarsMap.get(cars[i].id);
+    let CarsOnsameRoad = CarRoadMap.get(cars[i].id);
+    CarsOnsameRoad?.forEach(ele=>{
+      if(ele.idOnRaod > cars[i].idOnRoad){
+        p?.push({id:ele.id,order:-1});  
+      }
+    })
+  }
+  
+  for (let i = 0; i < type3edges.length; i++) {
+    if(type3edges[i].valid){
+      let car0Order = CarZoneOrderMap.get(type3edges[i].endpoint[0].id)?.get(type3edges[i].endpoint[0].zone_id);
+      let car1Order = CarZoneOrderMap.get(type3edges[i].endpoint[1].id)?.get(type3edges[i].endpoint[1].zone_id);
+
+      let Incar:number = FindCarPrevilegeBetter({id:type3edges[i].endpoint[0].id,order:car0Order},{id:type3edges[i].endpoint[1].id,order:car1Order},CarpastCarsMap,cnt);
+
+      if(Incar == -1){
+        // Incar = getRandomInt(2);
+        if(car0Order < car1Order){
+          Incar = 0;
+        }else{
+          Incar = 1;
+        }
+      }
+      removedtype3edge.push({
+        type: 3,
+        in: type3edges[i].endpoint[Incar],
+        out: type3edges[i].endpoint[1 - Incar],
+      });
+
+      type3edges[i].valid = false;
+      Type2removeBetter(type3edges[i].endpoint[Incar],type3edges[i].endpoint[1-Incar],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap);
+      let firstcarId:number = type3edges[i].endpoint[Incar].id;
+      let waitcarId:number = type3edges[i].endpoint[1 - Incar].id;
+
+      CarpastCarsMap.get(firstcarId)?.push({id:waitcarId,order:CarZoneOrderMap.get(waitcarId)?.get(type3edges[i].endpoint[0].zone_id)});
+ 
+
+      type3edges.forEach(ele=>{
+        if(ele.valid && ele.endpoint[0].id == firstcarId && ele.endpoint[1].id == waitcarId){
+          removedtype3edge.push({
+            type: 3,
+            in: ele.endpoint[0],
+            out: ele.endpoint[1],
+          });
+          ele.valid = false;
+          CarpastCarsMap.get(ele.endpoint[0].id)?.push({id:ele.endpoint[1].id,order:CarZoneOrderMap.get(ele.endpoint[1].id)?.get(ele.endpoint[1].zone_id)});
+          Type2removeBetter(ele.endpoint[0],ele.endpoint[1],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap);
+        }else if(ele.valid && ele.endpoint[1].id == firstcarId && ele.endpoint[0].id == waitcarId){
+          removedtype3edge.push({
+            type: 3,
+            in: ele.endpoint[1],
+            out: ele.endpoint[0],
+          });
+          ele.valid = false;
+          CarpastCarsMap.get(ele.endpoint[1].id)?.push({id:ele.endpoint[0].id,order:CarZoneOrderMap.get(ele.endpoint[0].id)?.get(ele.endpoint[0].zone_id)});
+          Type2removeBetter(ele.endpoint[1],ele.endpoint[0],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap);
+        }
+      });
+
+      // console.log(CarpastCarsMap);
+    }
+  }
+  // console.log(removedtype3edge);
+  type3edges.forEach(ele=>ele.valid = true);
+}
+
+
+
+
 
 type action = "right" | "foward" | "stop" | "left" | "nonsense";
 
@@ -619,7 +758,7 @@ export function getTimeMap(
   let n: number = 0; ///////debug use
   let successType3Edge: edge[] = [];
 
-  let approach:number = 2;
+  let approach:number = 3;
 
   // type3edges.sort(function(a,b){
   //   let cara1 = cars.find(ele=>ele.id == a.endpoint[0].id);
@@ -635,6 +774,7 @@ export function getTimeMap(
  
   
   // console.log(approach);
+  let cnt = 0;
   while (true) {
     let removedtype3edge: edge[] = [];
 
@@ -649,13 +789,18 @@ export function getTimeMap(
       case 2:
         ConsideALLConflictZoneApproach(removedtype3edge,type3edges,cars,CarRoadMap,CarZoneOrderMap);
         break;
+      case 3:
+        BetterApproach(removedtype3edge,type3edges,cars,CarRoadMap,CarZoneOrderMap,cnt);
+        cnt++;
+        break;
+          
     }
     
     // let fake = new Map<number,action[]>();
     // return fake;
 
     n++;
-    if (n == 100000){
+    if (n == 1000000){
       console.log('404 NOT FOUND');
       let fake = new Map<number,action[]>();
       return fake;
@@ -772,12 +917,9 @@ export function getTimeMap(
         }
         
         i = -1;
-        // ve.splice(i,1);
-        // i -= 1;
       }
     }
 
-    // console.log(ve.length);
     time++;
   }
  
