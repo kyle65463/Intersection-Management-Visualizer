@@ -37,14 +37,14 @@ function RoadsView({ dir, roads, isDragging, addRoad, moveCar, setCarDest, inter
 				>
 					+
 				</button>
-				<button
+				{/* <button
 					className='px-3 text-4xl font-light text-gray-600'
 					onClick={() => {
 						addRoad(new Road(roads.length, dir));
 					}}
 				>
 					-
-				</button>
+				</button> */}
 			</div>
 		</>
 	);
