@@ -454,25 +454,25 @@ function ConsideALLConflictZoneApproach(removedtype3edge:edge[],type3edges:type3
 
       if(CarpastCarsMap.get(firstcarId)?.find(ele=>ele == waitcarId) == undefined)CarpastCarsMap.get(firstcarId)?.push(waitcarId);
 
-      type3edges.forEach(ele=>{
-        if(ele.valid && ele.endpoint[0].id == firstcarId && ele.endpoint[1].id == waitcarId){
-          removedtype3edge.push({
-            type: 3,
-            in: ele.endpoint[0],
-            out: ele.endpoint[1],
-          });
-          ele.valid = false;
-          Type2remove(ele.endpoint[0],ele.endpoint[1],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap);
-        }else if(ele.valid && ele.endpoint[1].id == firstcarId && ele.endpoint[0].id == waitcarId){
-          removedtype3edge.push({
-            type: 3,
-            in: ele.endpoint[1],
-            out: ele.endpoint[0],
-          });
-          ele.valid = false;
-          Type2remove(ele.endpoint[1],ele.endpoint[0],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap);
-        }
-      });
+      // type3edges.forEach(ele=>{
+      //   if(ele.valid && ele.endpoint[0].id == firstcarId && ele.endpoint[1].id == waitcarId){
+      //     removedtype3edge.push({
+      //       type: 3,
+      //       in: ele.endpoint[0],
+      //       out: ele.endpoint[1],
+      //     });
+      //     ele.valid = false;
+      //     Type2remove(ele.endpoint[0],ele.endpoint[1],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap);
+      //   }else if(ele.valid && ele.endpoint[1].id == firstcarId && ele.endpoint[0].id == waitcarId){
+      //     removedtype3edge.push({
+      //       type: 3,
+      //       in: ele.endpoint[1],
+      //       out: ele.endpoint[0],
+      //     });
+      //     ele.valid = false;
+      //     Type2remove(ele.endpoint[1],ele.endpoint[0],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap);
+      //   }
+      // });
     }
   }
   type3edges.forEach(ele=>ele.valid = true);
@@ -594,11 +594,12 @@ function BetterApproach(removedtype3edge:edge[],type3edges:type3edge[],cars:carI
     if(type3edges[i].valid){
       let car0Order = CarZoneOrderMap.get(type3edges[i].endpoint[0].id)?.get(type3edges[i].endpoint[0].zone_id);
       let car1Order = CarZoneOrderMap.get(type3edges[i].endpoint[1].id)?.get(type3edges[i].endpoint[1].zone_id);
-
       let Incar:number = FindCarPrevilegeBetter({id:type3edges[i].endpoint[0].id,order:car0Order},{id:type3edges[i].endpoint[1].id,order:car1Order},CarpastCarsMap,cnt);
 
       if(Incar == -1){
         // Incar = getRandomInt(2);
+        let car0ConflictLength = cars.find(ele=>ele.id == type3edges[i].endpoint[0].id)?.zones.length;
+        let car1ConflictLength = cars.find(ele=>ele.id == type3edges[i].endpoint[1].id)?.zones.length;
         if(car0Order < car1Order){
           Incar = 0;
         }else{
@@ -617,29 +618,6 @@ function BetterApproach(removedtype3edge:edge[],type3edges:type3edge[],cars:carI
       let waitcarId:number = type3edges[i].endpoint[1 - Incar].id;
 
       CarpastCarsMap.get(firstcarId)?.push({id:waitcarId,order:CarZoneOrderMap.get(waitcarId)?.get(type3edges[i].endpoint[0].zone_id)});
- 
-
-      type3edges.forEach(ele=>{
-        if(ele.valid && ele.endpoint[0].id == firstcarId && ele.endpoint[1].id == waitcarId){
-          removedtype3edge.push({
-            type: 3,
-            in: ele.endpoint[0],
-            out: ele.endpoint[1],
-          });
-          ele.valid = false;
-          CarpastCarsMap.get(ele.endpoint[0].id)?.push({id:ele.endpoint[1].id,order:CarZoneOrderMap.get(ele.endpoint[1].id)?.get(ele.endpoint[1].zone_id)});
-          Type2removeBetter(ele.endpoint[0],ele.endpoint[1],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap);
-        }else if(ele.valid && ele.endpoint[1].id == firstcarId && ele.endpoint[0].id == waitcarId){
-          removedtype3edge.push({
-            type: 3,
-            in: ele.endpoint[1],
-            out: ele.endpoint[0],
-          });
-          ele.valid = false;
-          CarpastCarsMap.get(ele.endpoint[1].id)?.push({id:ele.endpoint[0].id,order:CarZoneOrderMap.get(ele.endpoint[0].id)?.get(ele.endpoint[0].zone_id)});
-          Type2removeBetter(ele.endpoint[1],ele.endpoint[0],removedtype3edge,type3edges,cars,CarRoadMap,CarpastCarsMap);
-        }
-      });
 
       // console.log(CarpastCarsMap);
     }
@@ -758,21 +736,11 @@ export function getTimeMap(
   let n: number = 0; ///////debug use
   let successType3Edge: edge[] = [];
 
-  let approach:number = 3;
 
-  // type3edges.sort(function(a,b){
-  //   let cara1 = cars.find(ele=>ele.id == a.endpoint[0].id);
-  //   let cara2 = cars.find(ele=>ele.id == a.endpoint[1].id);
-  //   let carb1 = cars.find(ele=>ele.id == b.endpoint[0].id);
-  //   let carb2 = cars.find(ele=>ele.id == b.endpoint[1].id);
-  //   let mina =  Math.min(cara1?.idOnRoad,cara2?.idOnRoad);
-  //   let minb = Math.min(carb1?.idOnRoad,carb2?.idOnRoad);
-  //   return mina - minb;
-  // });
   
   console.log('number of type3 edge = ',type3edges.length);
  
-  
+  let approach:number = 3;
   // console.log(approach);
   let cnt = 0;
   while (true) {
@@ -812,7 +780,6 @@ export function getTimeMap(
       break;
     }
   }
-
 
   
   //add type3Edge to vertex
