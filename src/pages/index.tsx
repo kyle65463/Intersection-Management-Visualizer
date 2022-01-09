@@ -156,6 +156,7 @@ function Home() {
 							const interval = setInterval(() => {
 								for (const car of cars) {
 									if (!car.isEnd) {
+										// @ts-ignore
 										const actions = map.get(car.id);
 										if (actions && actions.length > i) {
 											const move = Move.from(actions[i]);

@@ -304,6 +304,7 @@ function Type2remove(firstcar:vertex,waitcar:vertex,removedtype3edge:edge[],type
       let CarOnSameRoadw = CarRoadMap.get(waitcar.id);
       if(CarOnSameRoadw){
         CarOnSameRoadw.forEach(element=>{
+          // @ts-ignore
           if(element.idOnRaod > waitcardIdonRoad){
             let tmpv:vertex = {id:element.id,zone_id:firstcar.zone_id};
             type3edges.forEach(ele=>{
@@ -331,6 +332,7 @@ function Type2remove(firstcar:vertex,waitcar:vertex,removedtype3edge:edge[],type
       let CarOnSameRoadf = CarRoadMap.get(firstcar.id);
       if(CarOnSameRoadf){
         CarOnSameRoadf.forEach(element=>{
+          // @ts-ignore
           if(element.idOnRaod < firstcarIdonRoad){
             let tmpv:vertex = {id:element.id,zone_id:waitcar.zone_id};
             type3edges.forEach(ele=>{
@@ -436,6 +438,7 @@ function ConsideALLConflictZoneApproach(removedtype3edge:edge[],type3edges:type3
       let Incar:number = FindCarPrevilege(type3edges[i].endpoint[0].id,type3edges[i].endpoint[1].id,CarpastCarsMap);
       if(Incar == -1){
         // Incar = getRandomInt(2);
+        // @ts-ignore
         if(CarZoneOrderMap.get(type3edges[i].endpoint[0].id)?.get(type3edges[i].endpoint[0].zone_id) < CarZoneOrderMap.get(type3edges[i].endpoint[1].id)?.get(type3edges[i].endpoint[1].zone_id)){
           Incar = 0;
         }else{
@@ -485,6 +488,7 @@ function Type2removeBetter(firstcar:vertex,waitcar:vertex,removedtype3edge:edge[
       let CarOnSameRoadw = CarRoadMap.get(waitcar.id);
       if(CarOnSameRoadw){
         CarOnSameRoadw.forEach(element=>{
+          // @ts-ignore
           if(element.idOnRaod > waitcardIdonRoad){
             let tmpv:vertex = {id:element.id,zone_id:firstcar.zone_id};
             type3edges.forEach(ele=>{
@@ -510,6 +514,7 @@ function Type2removeBetter(firstcar:vertex,waitcar:vertex,removedtype3edge:edge[
       let CarOnSameRoadf = CarRoadMap.get(firstcar.id);
       if(CarOnSameRoadf){
         CarOnSameRoadf.forEach(element=>{
+          // @ts-ignore
           if(element.idOnRaod < firstcarIdonRoad){
             let tmpv:vertex = {id:element.id,zone_id:waitcar.zone_id};
             type3edges.forEach(ele=>{
@@ -594,12 +599,14 @@ function BetterApproach(removedtype3edge:edge[],type3edges:type3edge[],cars:carI
     if(type3edges[i].valid){
       let car0Order = CarZoneOrderMap.get(type3edges[i].endpoint[0].id)?.get(type3edges[i].endpoint[0].zone_id);
       let car1Order = CarZoneOrderMap.get(type3edges[i].endpoint[1].id)?.get(type3edges[i].endpoint[1].zone_id);
+      // @ts-ignore
       let Incar:number = FindCarPrevilegeBetter({id:type3edges[i].endpoint[0].id,order:car0Order},{id:type3edges[i].endpoint[1].id,order:car1Order},CarpastCarsMap,cnt);
 
       if(Incar == -1){
         // Incar = getRandomInt(2);
         let car0ConflictLength = cars.find(ele=>ele.id == type3edges[i].endpoint[0].id)?.zones.length;
         let car1ConflictLength = cars.find(ele=>ele.id == type3edges[i].endpoint[1].id)?.zones.length;
+        // @ts-ignore
         if(car0Order < car1Order){
           Incar = 0;
         }else{
@@ -617,6 +624,7 @@ function BetterApproach(removedtype3edge:edge[],type3edges:type3edge[],cars:carI
       let firstcarId:number = type3edges[i].endpoint[Incar].id;
       let waitcarId:number = type3edges[i].endpoint[1 - Incar].id;
 
+      // @ts-ignore
       CarpastCarsMap.get(firstcarId)?.push({id:waitcarId,order:CarZoneOrderMap.get(waitcarId)?.get(type3edges[i].endpoint[0].zone_id)});
 
       // console.log(CarpastCarsMap);
@@ -836,12 +844,15 @@ export function getTimeMap(
           let carOnsameRoad: roadcar[] | undefined = CarRoadMap.get(ve[i].id);
           if (carOnsameRoad) {
             for (let j = 0; j < carOnsameRoad?.length; j++) {
+              // @ts-ignore
               if (CarIdOnRoad.get(carOnsameRoad[j].id) < 0) {
                 continue;
               }
               let timeMovement = timeMap.get(carOnsameRoad[j].id);
+              // @ts-ignore
               timeMovement[timeMovement.length - 1]++;
               let idroad = CarIdOnRoad.get(carOnsameRoad[j].id);
+              // @ts-ignore
               CarIdOnRoad.set(carOnsameRoad[j].id, idroad - 1);
             }
           }
